@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yash Chauhan — Security Analyst</title>
+  <meta name="description" content="Yash Chauhan — Security Analyst. Incident Response, SOC, Cloud & VAPT." />
+  <meta name="author" content="Yash Chauhan" />
+  <style>
+    /* Terminal-style global theme with pulsing buttons */
+    :root{
+      --bg: #000;
+      --panel: #03110a;
+      --neon: #00ff66;        /* unified bright green */
+      --neon-cyan: #00e6ff;
+      --muted: #4f6b5a;
+      --mono: "SFMono-Regular", ui-monospace, "Roboto Mono", "Courier New", monospace;
+      --glow: 0 0 18px rgba(0,255,102,0.10), inset 0 0 40px rgba(0,255,102,0.02);
+      --card-border: rgba(0,255,102,0.06);
+      --panel-shadow: 0 8px 30px rgba(0,255,102,0.02);
+      --btn-text: #00110a;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:radial-gradient(800px 300px at 10% 10%, rgba(0,255,102,0.02), transparent), #000;color:#cfeef3;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;-webkit-font-smoothing:antialiased}
+    .wrap{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 20px}
+    .container{width:100%;max-width:1200px;position:relative}
+
+    /* binary background */
+    .binary { position:fixed; inset:0; z-index:0; opacity:0.05; pointer-events:none;
+      background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0 1px, transparent 1px 10px);
+    }
+
+    .terminal-panel{
+      border-radius:12px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.78), rgba(0,0,0,0.45));
+      border:1px solid rgba(0,255,102,0.04);
+      padding:18px;
+      box-shadow: var(--panel-shadow);
+      font-family: var(--mono);
+      color:var(--neon);
+      margin-bottom:18px;
+      z-index:2;
+    }
+    .terminal-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--muted)}
+    .term-dots{display:flex;gap:8px}
+    .term-dot{width:12px;height:12px;border-radius:999px;display:inline-block}
+    .term-dot.r{background:#ff6b6b}
+    .term-dot.y{background:#ffd166}
+    .term-dot.g{background:var(--neon); /* pulsing glow applied via animation below */ }
+
+    .term-window{
+      background: #02120b;
+      border-radius:10px;
+      border:1px solid rgba(0,255,102,0.06);
+      padding:12px;
+      font-family:var(--mono);
+      color:var(--neon);
+      font-size:14px;
+      line-height:1.6;
+      max-height:420px;
+      overflow:auto;
+      box-shadow: inset 0 0 18px rgba(0,255,102,0.02);
+    }
+
+    .quick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:14px;z-index:2}
+    .quick-card{
+      border-radius:10px;padding:16px;border:1px solid var(--card-border);
+      background:linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.12));
+      color:var(--neon); box-shadow: var(--panel-shadow);
+    }
+    .quick-card h4{margin:0 0 8px;font-size:16px}
+    .quick-card p{margin:0;color:var(--muted);font-size:13px}
+
+    /* pulsing animation */
+    @keyframes neonPulse {
+      0% { box-shadow: 0 6px 14px rgba(0,255,102,0.08), 0 0 8px rgba(0,255,102,0.04); transform: translateY(0);}
+      50% { box-shadow: 0 12px 30px rgba(0,255,102,0.18), 0 0 24px rgba(0,255,102,0.08); transform: translateY(-2px); }
+      100% { box-shadow: 0 6px 14px rgba(0,255,102,0.08), 0 0 8px rgba(0,255,102,0.04); transform: translateY(0);}
+    }
+
+    /* unified bright green button with subtle pulse */
+    .btn{
+      display:inline-block;padding:8px 14px;border-radius:8px;border:none;background:var(--neon);color:var(--btn-text);
+      font-family:var(--mono);font-weight:800;cursor:pointer;box-shadow:0 8px 26px rgba(0,255,102,0.06);
+      animation: neonPulse 3.2s ease-in-out infinite;
+      transition: transform .12s ease;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--neon);animation:none;box-shadow:none}
+
+    /* pulse for green terminal dot (slower, subtle) */
+    @keyframes dotPulse {
+      0% { filter: drop-shadow(0 0 6px rgba(0,255,102,0.3)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 12px rgba(0,255,102,0.55)); transform: scale(1.07); }
+      100% { filter: drop-shadow(0 0 6px rgba(0,255,102,0.3)); transform: scale(1); }
+    }
+    .term-dot.g{animation: dotPulse 2.8s ease-in-out infinite;}
+
+    /* layout */
+    .content{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px;align-items:start;z-index:2}
+    .panel{background:transparent;padding:0;border-radius:8px}
+
+    h2{color:var(--neon);font-family:var(--mono);font-size:20px;margin:0 0 12px}
+    h3{color:var(--neon);font-family:var(--mono);font-size:16px;margin:12px 0 8px}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* SERVICES */
+    .services{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .service-box{
+      border-radius:10px;padding:14px;background:#02120b;border:1px solid rgba(0,255,102,0.03);
+      box-shadow: inset 0 0 20px rgba(0,255,102,0.01);
+      color:var(--neon);
+    }
+    .service-box strong{display:block;color:var(--neon);font-family:var(--mono);margin-bottom:6px}
+
+    /* SKILLS: single-open accordion */
+    .skills-accordion{margin-top:12px}
+    .skill-item{border-radius:10px;border:1px solid rgba(0,255,102,0.03);overflow:hidden;margin-top:10px;background:#030d08}
+    .skill-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;color:var(--neon);font-family:var(--mono);font-weight:700}
+    .skill-head .chev{width:28px;height:28px;border-radius:6px;border:1px solid rgba(0,255,102,0.06);display:flex;align-items:center;justify-content:center;color:var(--neon);font-weight:700}
+    .skill-body{height:0;overflow:hidden;transition:height .32s ease;padding:0 14px;background:#02120b}
+    .skill-body-inner{padding:12px 0;display:flex;flex-wrap:wrap;gap:10px}
+    .skill-badge{
+      padding:8px 12px;border-radius:999px;border:1px solid rgba(0,255,102,0.12);color:var(--neon);font-family:var(--mono);background:transparent;
+      opacity:0; transform:translateY(8px); transition:opacity .32s ease, transform .32s ease;
+    }
+    .skill-badge.show{opacity:1;transform:translateY(0)}
+
+    /* PROJECTS */
+    .projects-list{margin-top:12px;display:flex;flex-direction:column;gap:12px}
+    .proj-row{border-radius:10px;padding:14px;background:#02120b;border:1px solid rgba(0,255,102,0.03);display:flex;justify-content:space-between;gap:12px;align-items:flex-start;font-family:var(--mono)}
+    .proj-left strong{color:var(--neon);display:block}
+    .proj-left .desc{color:var(--muted);margin-top:6px;font-size:13px}
+    .proj-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .tag{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-size:12px}
+    .proj-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+    .status{padding:6px 10px;border-radius:999px;font-family:var(--mono);font-size:12px}
+    .status.comp{background:rgba(0,255,102,0.06);color:var(--neon);border:1px solid rgba(0,255,102,0.12)}
+    .status.ong{background:rgba(0,230,255,0.04);color:var(--neon-cyan);border:1px solid rgba(0,230,255,0.08)}
+    .status.plan{background:rgba(124,58,237,0.04);color:var(--neon-cyan);border:1px solid rgba(124,58,237,0.06)}
+    .proj-detail{margin-top:8px;padding:12px;border-radius:8px;background:#011007;border:1px solid rgba(0,255,102,0.03);max-height:0;overflow:hidden;transition:max-height .28s ease,opacity .28s ease;opacity:0}
+    .proj-detail.open{max-height:360px;opacity:1}
+
+    /* EDUCATION / CERTIFICATES */
+    .edu-card{border-radius:10px;padding:12px;background:#02120b;border:1px solid rgba(0,255,102,0.03)}
+    .cert-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+    .cert-card{padding:12px;border-radius:10px;background:#02120b;border:1px solid rgba(0,255,102,0.03);font-family:var(--mono);color:var(--neon)}
+    .cert-card .issuer{color:var(--muted);font-size:13px;margin-top:6px}
+
+    /* SIDEBAR */
+    aside.panel{position:sticky;top:28px;align-self:start;background:transparent}
+    input, textarea{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#06110a;color:var(--neon);font-family:var(--mono);margin-top:8px}
+    textarea{min-height:80px}
+    footer{margin-top:18px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+
+    @media (max-width:1000px){
+      .quick-row{grid-template-columns:1fr}
+      .content{grid-template-columns:1fr}
+      .cert-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="binary" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="container">
+
+      <!-- TOP TERMINAL WINDOW -->
+      <div class="terminal-panel" aria-hidden="false">
+        <div class="terminal-header">
+          <div class="term-dots"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></div>
+          <div class="muted">terminal.app</div>
+        </div>
+        <!-- NON-ANIMATED terminal content (clean vertical layout) -->
+        <div class="term-window" id="termWindow" role="region" aria-label="Terminal output" aria-live="polite">
+<pre style="margin:0;white-space:pre-wrap;">
+$ whoami
+Yash Chauhan — Purple Team & Security Analyst
+
+$ role
+Hybrid Red & Blue Operations
+Incident Response • Detection Engineering • VAPT
+
+$ mission
+Bridge offensive insights with defensive engineering.
+Deliver measurable detections, validated coverage,
+and hardened cloud/CDN environments.
+
+$ echo "Secure. Detect. Respond. Improve."
+</pre>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="quick-row" role="region" aria-label="Quick actions">
+        <div class="quick-card">
+          <h4>Request Assessment</h4>
+          <p>Request a VAPT or detection review. I’ll deliver prioritized findings and remediation steps.</p>
+          <div style="margin-top:12px"><button class="btn" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Go to Services</button></div>
+        </div>
+        <div class="quick-card">
+          <h4>Book IR Retainer</h4>
+          <p>Need rapid incident support or ongoing IR coverage? Send a request to discuss SOW & availability.</p>
+          <div style="margin-top:12px"><button class="btn" onclick="window.location.href='mailto:yash222000.yc@gmail.com?subject=IR%20Retainer'">Email to Book</button></div>
+        </div>
+        <div class="quick-card">
+          <h4>SOC Onboarding</h4>
+          <p>Interested in SOC setup or analyst enablement? View SOC services and monitoring capabilities.</p>
+          <div style="margin-top:12px"><button class="btn" onclick="document.getElementById('skills').scrollIntoView({behavior:'smooth'})">Learn More</button></div>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="content">
+        <main class="panel" aria-labelledby="about-title">
+
+          <!-- ABOUT -->
+          <h2 id="about-title">About</h2>
+          <div class="terminal-panel" style="padding:12px 18px 16px;">
+            <div class="terminal-header"><div class="term-dots"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></div><div class="muted">terminal.app — about.txt</div></div>
+            <div class="term-window" style="max-height:260px;">
+<pre style="margin:0;white-space:pre-wrap;">
+Security Analyst with strong expertise in Incident Response, SOC operations, Cloud Security, and VAPT, experienced across high-scale environments including CDN infrastructures, Cloudflare, and AWS. Skilled in threat detection, log analysis, and cyber-attack mitigation using ELK, Wazuh, Suricata, ModSecurity, and advanced security testing methodologies. Demonstrated ability to secure web applications, APIs, OT/IoT systems, and enterprise networks through hands-on monitoring, phishing defense, and data-protection practices. Recognized for collaborative incident handling, deep Linux proficiency, and delivering security awareness across both technical and non-technical teams.
+</pre>
+            </div>
+          </div>
+
+          <!-- SERVICES -->
+          <h3 id="services">Services</h3>
+          <div class="services" role="list">
+            <div class="service-box" role="listitem">
+              <strong>Incident Response</strong>
+              <div class="muted">IR playbooks, triage, containment, forensic notes and post-incident reporting.</div>
+            </div>
+            <div class="service-box" role="listitem">
+              <strong>SOC Operations</strong>
+              <div class="muted">Detection tuning, alert workflows, ELK/Wazuh/Suricata onboarding and analyst enablement.</div>
+            </div>
+            <div class="service-box" role="listitem">
+              <strong>Cloud Security</strong>
+              <div class="muted">Cloud reviews, CDN/WAF hardening (Cloudflare), and secure AWS guidance.</div>
+            </div>
+            <div class="service-box" role="listitem">
+              <strong>VAPT & Security Testing</strong>
+              <div class="muted">OWASP testing, authenticated assessments, and WAF bypass simulation.</div>
+            </div>
+          </div>
+
+          <!-- SKILLS -->
+          <h3 id="skills" style="margin-top:18px">Core Skills & Tools</h3>
+          <div class="skills-accordion" aria-live="polite">
+            <div class="skill-item">
+              <div class="skill-head" data-target="vapt" tabindex="0" role="button" aria-expanded="true">
+                <div>▾ Vulnerability Assessment & Penetration Testing (VAPT)</div>
+                <div class="chev">▶</div>
+              </div>
+              <div class="skill-body" id="vapt-body">
+                <div class="skill-body-inner">
+                  <div class="skill-badge">Burp Suite</div>
+                  <div class="skill-badge">OWASP ZAP</div>
+                  <div class="skill-badge">Nmap</div>
+                  <div class="skill-badge">sqlmap</div>
+                  <div class="skill-badge">Nikto</div>
+                  <div class="skill-badge">Metasploit</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-head" data-target="monitor" tabindex="0" role="button" aria-expanded="false">
+                <div>▸ Monitoring, Logging & Detection</div>
+                <div class="chev">▶</div>
+              </div>
+              <div class="skill-body" id="monitor-body">
+                <div class="skill-body-inner">
+                  <div class="skill-badge">Elastic Stack (ELK)</div>
+                  <div class="skill-badge">Wazuh</div>
+                  <div class="skill-badge">Suricata</div>
+                  <div class="skill-badge">Splunk</div>
+                  <div class="skill-badge">Sigma rules</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-head" data-target="cloud" tabindex="0" role="button" aria-expanded="false">
+                <div>▸ Cloud & CDN</div>
+                <div class="chev">▶</div>
+              </div>
+              <div class="skill-body" id="cloud-body">
+                <div class="skill-body-inner">
+                  <div class="skill-badge">AWS (EC2, S3, IAM)</div>
+                  <div class="skill-badge">Cloudflare</div>
+                  <div class="skill-badge">Akamai</div>
+                  <div class="skill-badge">CDN Security</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-head" data-target="script" tabindex="0" role="button" aria-expanded="false">
+                <div>▸ Scripting & Languages</div>
+                <div class="chev">▶</div>
+              </div>
+              <div class="skill-body" id="script-body">
+                <div class="skill-body-inner">
+                  <div class="skill-badge">Python</div>
+                  <div class="skill-badge">Bash</div>
+                  <div class="skill-badge">Regular Expressions</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-head" data-target="social" tabindex="0" role="button" aria-expanded="false">
+                <div>▸ Social Engineering & Simulations</div>
+                <div class="chev">▶</div>
+              </div>
+              <div class="skill-body" id="social-body">
+                <div class="skill-body-inner">
+                  <div class="skill-badge">Gophish</div>
+                  <div class="skill-badge">SET</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-head" data-target="other" tabindex="0" role="button" aria-expanded="false">
+                <div>▸ Other / Network</div>
+                <div class="chev">▶</div>
+              </div>
+              <div class="skill-body" id="other-body">
+                <div class="skill-body-inner">
+                  <div class="skill-badge">API Security</div>
+                  <div class="skill-badge">Network Security</div>
+                  <div class="skill-badge">Attack Mitigation</div>
+                  <div class="skill-badge">Incident Handling</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROJECTS -->
+          <h3 style="margin-top:18px">Projects</h3>
+          <div class="projects-list">
+            <div class="proj-row" data-id="p1">
+              <div class="proj-left">
+                <strong>Hybrid Red & Blue Team Security Monitoring & Attack Simulation Framework</strong>
+                <div class="desc">Cloud-hosted monitoring & simulation framework; detection tuning and IR workflow validation.</div>
+              </div>
+              <div class="proj-actions">
+                <div class="proj-meta"><div class="tag">ELK • Wazuh</div></div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn" onclick="toggleDetail('p1')">Details</button>
+                  <div class="status comp">Completed</div>
+                </div>
+              </div>
+            </div>
+            <div id="detail-p1" class="proj-detail">
+              <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+                <div style="max-width:72%">
+                  <div class="muted">What I did</div>
+                  <div class="muted" style="margin-top:8px">Designed and deployed a hybrid red/blue environment that simulated real attacks against a cloud app, tuned detection rules, and validated SOC playbooks. Reduced detection false positives and improved time-to-detection.</div>
+                </div>
+                <div style="min-width:160px;display:flex;flex-direction:column;gap:8px;">
+                  <button class="btn" onclick="window.location.href='mailto:yash222000.yc@gmail.com?subject=Inquiry%20-%20Hybrid%20Framework'">Inquire</button>
+                  <a class="btn" href="/mnt/data/Yash Chauhan - Security Analyst Resume.pdf" target="_blank">Download Resume</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="proj-row" data-id="p2">
+              <div class="proj-left">
+                <strong>WAF & CDN Hardening (ModSecurity + Cloudflare)</strong>
+                <div class="desc">Rule tuning and production rollout tests.</div>
+              </div>
+              <div class="proj-actions">
+                <div class="proj-meta"><div class="tag">ModSecurity • Cloudflare</div></div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn" onclick="toggleDetail('p2')">Details</button>
+                  <div class="status ong">Ongoing</div>
+                </div>
+              </div>
+            </div>
+            <div id="detail-p2" class="proj-detail">
+              <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+                <div style="max-width:72%">
+                  <div class="muted">Focus</div>
+                  <div class="muted" style="margin-top:8px">Created regex and signature rules, tested WAF bypass cases, and integrated rate-limiting with Cloudflare. Helped clients reduce malicious traffic while minimizing valid-user impact.</div>
+                </div>
+                <div style="min-width:160px;display:flex;flex-direction:column;gap:8px;">
+                  <button class="btn" onclick="window.location.href='mailto:yash222000.yc@gmail.com?subject=Inquiry%20-%20WAF%20Hardening'">Inquire</button>
+                  <a class="btn" href="/mnt/data/Yash Chauhan - Security Analyst Resume.pdf" target="_blank">Download Resume</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="proj-row" data-id="p3">
+              <div class="proj-left">
+                <strong>Phishing Simulations & IR Playbooks</strong>
+                <div class="desc">Enterprise phishing tests and IR playbook creation.</div>
+              </div>
+              <div class="proj-actions">
+                <div class="proj-meta"><div class="tag">Gophish • SET</div></div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn" onclick="toggleDetail('p3')">Details</button>
+                  <div class="status comp">Completed</div>
+                </div>
+              </div>
+            </div>
+            <div id="detail-p3" class="proj-detail">
+              <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+                <div style="max-width:72%">
+                  <div class="muted">Outcome</div>
+                  <div class="muted" style="margin-top:8px">Delivered training reports, simulated campaigns and enabled detection playbooks to improve user reporting rates and reduce click-throughs in targeted groups.</div>
+                </div>
+                <div style="min-width:160px;display:flex;flex-direction:column;gap:8px;">
+                  <button class="btn" onclick="window.location.href='mailto:yash222000.yc@gmail.com?subject=Inquiry%20-%20Phishing%20Sim'">Inquire</button>
+                  <a class="btn" href="/mnt/data/Yash Chauhan - Security Analyst Resume.pdf" target="_blank">Download Resume</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- placeholder project rows -->
+            <div class="proj-row">
+              <div class="proj-left">
+                <strong>Project slot — add title</strong>
+                <div class="desc">Short description... (add details)</div>
+              </div>
+              <div class="proj-actions">
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn" onclick="alert('Add details in index.html')">Details</button>
+                  <div class="status plan">Planned</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EDUCATION -->
+          <h3 style="margin-top:18px">Education</h3>
+          <div class="edu-card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <strong>Parul University</strong>
+                <div class="muted" style="margin-top:6px">Bachelor of Technology - BTech, Computer Science & Engineering</div>
+              </div>
+              <div class="muted">Sep 2021 - Sep 2025</div>
+            </div>
+          </div>
+
+          <!-- CERTIFICATES -->
+          <h3 style="margin-top:18px">Certificates</h3>
+          <div class="cert-grid">
+            <div class="cert-card"><strong>CompTIA Security+</strong><div class="issuer">CompTIA</div></div>
+            <div class="cert-card"><strong>AWS Cloud Practitioner Essentials</strong><div class="issuer">Amazon</div></div>
+            <div class="cert-card"><strong>AWS Security Fundamentals</strong><div class="issuer">Amazon Web Services (AWS)</div></div>
+            <div class="cert-card"><strong>Introduction to Programming Using Python</strong><div class="issuer">IBM</div></div>
+            <div class="cert-card"><strong>Ethical Hacking</strong><div class="issuer">Parul University</div></div>
+          </div>
+
+        </main>
+
+        <!-- SIDEBAR -->
+        <aside class="panel" aria-label="Sidebar">
+          <div class="terminal-panel" style="padding:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div style="font-family:var(--mono);color:var(--neon)">Socials & Resume</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+              <a href="https://www.linkedin.com/in/yash-chauhan-829794164" style="color:var(--neon);text-decoration:none;font-family:var(--mono)">LinkedIn</a>
+              <a href="https://github.com/YOUR_GITHUB" style="color:var(--neon);text-decoration:none;font-family:var(--mono)">GitHub</a>
+              <a href="#" style="color:var(--neon);text-decoration:none;font-family:var(--mono)">Twitter</a>
+            </div>
+
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+              <a class="btn" href="/mnt/data/Yash Chauhan - Security Analyst Resume.pdf" target="_blank">Download Resume</a>
+              <button id="copyEmail" class="btn">Copy email</button>
+              <span id="copyStatus" class="muted" style="margin-left:8px"></span>
+            </div>
+
+            <div style="margin-top:6px">
+              <div style="font-family:var(--mono);color:var(--neon);margin-bottom:8px">Contact</div>
+              <form id="contactForm" onsubmit="return handleSubmit(event)">
+                <input type="text" id="hp" name="hp" style="display:none" autocomplete="off" />
+                <input id="name" name="name" type="text" placeholder="Your name" required />
+                <input id="email" name="email" type="email" placeholder="Your email" required />
+                <input id="subject" name="subject" type="text" placeholder="Subject" required />
+                <textarea id="message" name="message" placeholder="Message" required></textarea>
+
+                <div class="muted" style="font-size:12px;margin-top:8px">This will open your email app prefilled to <strong>yash222000.yc@gmail.com</strong>.</div>
+                <div style="margin-top:12px"><button class="btn" type="submit">Open email app</button></div>
+                <div id="status" class="muted" style="margin-top:8px" aria-live="polite"></div>
+              </form>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <footer>
+        <div class="muted mono">Built with neon terminal vibe • Host on GitHub Pages</div>
+        <div class="muted mono">Resume: <code>/mnt/data/Yash Chauhan - Security Analyst Resume.pdf</code></div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // copy email
+    document.getElementById('copyEmail').addEventListener('click', async function(){
+      try{
+        await navigator.clipboard.writeText('yash222000.yc@gmail.com');
+        const s = document.getElementById('copyStatus');
+        s.textContent = 'Copied!';
+        setTimeout(()=> s.textContent = '', 2000);
+      }catch(e){
+        document.getElementById('copyStatus').textContent = 'Copy failed';
+      }
+    });
+
+    // contact mailto handler
+    const RECEIVER = "yash222000.yc@gmail.com";
+    function handleSubmit(e){
+      e.preventDefault();
+      const hp = document.getElementById('hp').value;
+      if (hp && hp.trim() !== "") { document.getElementById('status').textContent = "Thanks!"; return false; }
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value.trim() || "Website contact";
+      const message = document.getElementById('message').value.trim();
+      if (!name || !email || !message){ document.getElementById('status').textContent = "Please complete all fields."; return false; }
+      const fullSubject = `${subject} — from ${name}`;
+      const body = [`Name: ${name}`, `Email: ${email}`, '', message, '', '---', 'Sent from portfolio hosted on GitHub Pages'].join('\n');
+      window.location.href = `mailto:${encodeURIComponent(RECEIVER)}?subject=${encodeURIComponent(fullSubject)}&body=${encodeURIComponent(body)}`;
+      document.getElementById('status').textContent = "If your mail client didn't open, ensure a default mail app is configured.";
+      return false;
+    }
+
+    /* SKILLS: single-open accordion with badge staging */
+    (function(){
+      const items = Array.from(document.querySelectorAll('.skill-item'));
+      function closeAll(){
+        items.forEach(it=>{
+          const head = it.querySelector('.skill-head');
+          const body = it.querySelector('.skill-body');
+          const inner = it.querySelector('.skill-body-inner');
+          if(body && inner){
+            body.style.height = 0;
+            head.setAttribute('aria-expanded','false');
+            it.querySelectorAll('.skill-badge').forEach(b=> b.classList.remove('show'));
+          }
+        });
+      }
+      items.forEach((item, idx)=>{
+        const head = item.querySelector('.skill-head');
+        const body = item.querySelector('.skill-body');
+        const inner = item.querySelector('.skill-body-inner');
+        // open first
+        if(idx === 0 && body && inner){
+          const h = inner.offsetHeight;
+          body.style.height = (h + 12) + 'px';
+          head.setAttribute('aria-expanded','true');
+          item.querySelectorAll('.skill-badge').forEach((b,i)=> setTimeout(()=> b.classList.add('show'), i*60));
+        } else if(body) {
+          body.style.height = 0;
+          head.setAttribute('aria-expanded','false');
+        }
+        head.addEventListener('click', ()=>{
+          const open = head.getAttribute('aria-expanded') === 'true';
+          if(open){
+            // close this one
+            body.style.height = 0;
+            head.setAttribute('aria-expanded','false');
+            item.querySelectorAll('.skill-badge').forEach(b=> b.classList.remove('show'));
+          } else {
+            // close others then open this
+            closeAll();
+            const h = inner ? inner.offsetHeight : 0;
+            body.style.height = (h + 12) + 'px';
+            head.setAttribute('aria-expanded','true');
+            item.querySelectorAll('.skill-badge').forEach((b,i)=> setTimeout(()=> b.classList.add('show'), i*60));
+          }
+        });
+        head.addEventListener('keydown', (ev)=> { if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); head.click(); } });
+      });
+    })();
+
+    // projects toggle details (single-open)
+    function toggleDetail(id){
+      const detail = document.getElementById('detail-' + id);
+      if(!detail) return;
+      const open = detail.classList.contains('open');
+      // close all
+      document.querySelectorAll('.proj-detail.open').forEach(d => d.classList.remove('open'));
+      if(!open) detail.classList.add('open');
+      else detail.classList.remove('open');
+      setTimeout(()=> detail.scrollIntoView({behavior:'smooth', block:'center'}), 80);
+    }
+  </script>
+</body>
+</html>
