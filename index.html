@@ -7,351 +7,543 @@
   <meta name="description" content="Yash Chauhan — Security Analyst. Incident Response, SOC, Cloud & VAPT." />
   <meta name="author" content="Yash Chauhan" />
   <style>
-    /* Terminal-style global theme with pulsing buttons */
     :root{
-      --bg: #000;
-      --panel: #03110a;
-      --neon: #00ff66;        
-      --neon-cyan: #00e6ff;
-      --muted: #4f6b5a;
-      --mono: "SFMono-Regular", ui-monospace, "Roboto Mono", "Courier New", monospace;
-      --glow: 0 0 18px rgba(0,255,102,0.10), inset 0 0 40px rgba(0,255,102,0.02);
-      --card-border: rgba(0,255,102,0.06);
-      --panel-shadow: 0 8px 30px rgba(0,255,102,0.02);
-      --btn-text: #00110a;
+      --bg: #000906;
+      --panel-bg: #00120b;
+      --neon: #00ff66;
+      --neon-strong: #00ff66;
+      --muted:#88bfa0;
+      --muted-fg:#c8ffe4;
+      --mono: "Courier New", Courier, monospace;
+      --max-width: 1200px;
+      --gutter: 20px;
+      --nav-height: 64px;
+      --radius: 12px;
+      --section-gap: 18px;
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:radial-gradient(800px 300px at 10% 10%, rgba(0,255,102,0.02), transparent), #000;color:#cfeef3;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;-webkit-font-smoothing:antialiased}
-    .wrap{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 20px}
-    .container{width:100%;max-width:1200px;position:relative}
+    html,body{height:100%;margin:0;background:radial-gradient(1200px 500px at 5% 6%, rgba(0,255,102,0.02), transparent), var(--bg);color:var(--neon);font-family:var(--mono);-webkit-font-smoothing:antialiased;scroll-behavior:smooth;line-height:1.6;font-size:16px}
 
-    .binary { position:fixed; inset:0; z-index:0; opacity:0.05; pointer-events:none;
-      background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0 1px, transparent 1px 10px);
-    }
+    /* Top navigation (terminal-tab style) */
+    .top-nav{position:fixed;inset-inline:0;top:0;height:var(--nav-height);display:flex;align-items:center;z-index:999;background:linear-gradient(180deg, rgba(0,6,4,0.95), rgba(0,12,8,0.95));padding:8px 16px;border-bottom:1px solid rgba(0,255,102,0.04);backdrop-filter:none} 
+    .top-nav-inner{width:100%;max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;gap:18px}
 
-    .terminal-panel{
-      border-radius:12px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.78), rgba(0,0,0,0.45));
-      border:1px solid rgba(0,255,102,0.04);
-      padding:18px;
-      box-shadow: var(--panel-shadow);
-      font-family: var(--mono);
-      color:var(--neon);
-      margin-bottom:18px;
-      z-index:2;
-    }
-    .terminal-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--muted)}
-    .term-dots{display:flex;gap:8px}
-    .term-dot{width:12px;height:12px;border-radius:999px;display:inline-block}
-    .term-dot.r{background:#ff6b6b}
-    .term-dot.y{background:#ffd166}
-    .term-dot.g{background:var(--neon);animation: dotPulse 2.8s ease-in-out infinite;}
+    /* small terminal window controls (close, minimize, maximize) */
+    .window-controls{display:flex;gap:8px;align-items:center;margin-right:8px}
+    .window-controls .wc{width:12px;height:12px;border-radius:50%;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.6);border:1px solid rgba(0,0,0,0.4)}
+    .window-controls .wc-close{background:linear-gradient(180deg,#ff605c,#ff3b30)}
+    .window-controls .wc-min{background:linear-gradient(180deg,#ffbd2e,#ffb21a)}
+    .window-controls .wc-max{background:linear-gradient(180deg,#2bd24a,#00c851)}
 
-    @keyframes dotPulse {
-      0% { filter: drop-shadow(0 0 6px rgba(0,255,102,0.3)); transform: scale(1); }
-      50% { filter: drop-shadow(0 0 12px rgba(0,255,102,0.55)); transform: scale(1.07); }
-      100% { filter: drop-shadow(0 0 6px rgba(0,255,102,0.3)); transform: scale(1); }
-    }
+    .nav-links{display:flex;gap:12px;align-items:center;font-family:var(--mono);font-size:14px}
+    .nav-links a{color:var(--neon);text-decoration:none;padding:10px 14px;border-radius:12px;background:rgba(0,0,0,0.32);border:1px solid rgba(0,255,102,0.02)} .nav-links a:hover{background:rgba(0,255,102,0.06)}
+    .nav-links a:hover{background:rgba(0,255,102,0.03)}
+    .nav-links a.active{color:#00110a;background:linear-gradient(90deg, var(--neon) 0%, #00e052 100%);box-shadow:0 12px 40px rgba(0,255,102,0.06);font-weight:700}
+    .cta-btn{margin-left:auto;padding:8px 14px;border-radius:999px;border:none;background:linear-gradient(90deg, var(--neon), #00d25a);color:#00110a;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:var(--mono)}
 
-    .term-window{
-      background: #02120b;
-      border-radius:10px;
-      border:1px solid rgba(0,255,102,0.06);
-      padding:12px;
-      font-family:var(--mono);
-      color:var(--neon);
-      font-size:14px;
-      line-height:1.6;
-      max-height:420px;
-      overflow:auto;
-      box-shadow: inset 0 0 18px rgba(0,255,102,0.02);
-    }
+    
 
-    .quick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:14px;z-index:2}
-    .quick-card{
-      border-radius:10px;padding:16px;border:1px solid var(--card-border);
-      background:linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.12));
-      color:var(--neon); box-shadow: var(--panel-shadow);
-    }
+    /* Layout */
+    .wrap{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:calc(var(--nav-height) + 18px) 20px 36px}
+    .container{width:100%;max-width:var(--max-width);margin:0 auto;position:relative;padding:var(--gutter);display:flex;flex-direction:column;gap:var(--section-gap)}
+    .mono{font-family:var(--mono)}
+    .muted{color:rgba(0,255,102,0.55);font-size:14px}
+    .binary{position:fixed;inset:0;z-index:0;opacity:0.02;pointer-events:none;background-image:repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0 1px, transparent 1px 14px)}
 
-    @keyframes neonPulse {
-      0% { box-shadow: 0 6px 14px rgba(0,255,102,0.08), 0 0 8px rgba(0,255,102,0.04); transform: translateY(0);}
-      50% { box-shadow: 0 12px 30px rgba(0,255,102,0.18), 0 0 24px rgba(0,255,102,0.08); transform: translateY(-2px); }
-      100% { box-shadow: 0 6px 14px rgba(0,255,102,0.08), 0 0 8px rgba(0,255,102,0.04); transform: translateY(0);}
-    }
+    /* Terminal full-width hero */
+    .terminal-panel{border-radius:14px;background:linear-gradient(180deg, rgba(0,18,11,0.95), rgba(0,18,11,0.85));border:1px solid rgba(0,255,102,0.06);padding:20px 22px;box-shadow:0 30px 80px rgba(0,0,0,0.6);font-family:var(--mono);color:var(--neon);z-index:2;margin-bottom:6px;width:100%;}
+    .terminal-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+    .classic-term{background:transparent;border-radius:8px;padding:18px;border:1px solid rgba(0,255,102,0.03);font-family:var(--mono);color:var(--neon);box-shadow:inset 0 0 30px rgba(0,255,102,0.02);font-size:15px;line-height:1.8;white-space:pre-wrap;overflow:visible;}
 
-    .btn{
-      display:inline-block;padding:8px 14px;border-radius:8px;border:none;background:var(--neon);color:var(--btn-text);
-      font-family:var(--mono);font-weight:800;cursor:pointer;
-      animation: neonPulse 3.2s ease-in-out infinite;
-      transition: transform .12s ease;
-    }
-    .btn:active{transform:translateY(1px)}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--neon);animation:none;box-shadow:none}
+    /* Section titles styled like terminal headings */
+    h1.site-title{font-family:var(--mono);color:var(--neon);font-size:22px;margin:0;font-weight:800;letter-spacing:0.8px}
+    h2.section-title{font-family:var(--mono);color:var(--neon);font-size:18px;margin:0 0 6px;font-weight:800}
+    h3.sub{font-family:var(--mono);color:var(--neon);font-size:14px;margin:0;font-weight:700}
+    h4{font-family:var(--mono);color:var(--neon);font-size:15px;margin:0;font-weight:700}
+    p{color:#9fffd1;margin:0 0 12px;font-size:15px}
 
-    .content{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px;align-items:start;z-index:2}
+    /* Cards unified terminal style */
+    .about-card, .edu-outer, .experience-panel, .stack-panel, .project-card, .contact-left, .contact-right{background:linear-gradient(180deg, rgba(0,12,8,0.6), rgba(0,12,8,0.3));border:1px solid rgba(0,255,102,0.04);border-radius:12px;padding:16px;box-shadow:inset 0 2px 18px rgba(0,0,0,0.5);}
 
-    h2{color:var(--neon);font-family:var(--mono);font-size:20px;margin:0 0 12px}
-    h3{color:var(--neon);font-family:var(--mono);font-size:16px;margin:12px 0 8px}
+    .about-card{display:flex;flex-direction:column;gap:12px}
+    .about-left{color:rgba(0,255,102,0.68);line-height:1.75;font-size:15px}
 
-    .muted{color:var(--muted);font-size:13px}
+    /* Education cards */
+    .edu-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+    .edu-card{border-radius:10px;padding:16px;background:#021016;border:1px solid rgba(0,255,102,0.06);box-shadow:inset 0 0 20px rgba(0,0,0,0.12);font-family:var(--mono);color:var(--neon);display:flex;flex-direction:column;justify-content:space-between;min-height:140px}
 
-    /* SERVICES */
-    .services{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .service-box{
-      border-radius:10px;padding:14px;background:#02120b;border:1px solid rgba(0,255,102,0.03);
-      box-shadow: inset 0 0 20px rgba(0,255,102,0.01);
-      color:var(--neon);
-    }
-    .service-box strong{display:block;color:var(--neon);font-family:var(--mono);margin-bottom:6px}
+    /* experience */
+    .experience-panel{padding:16px}
+    .exp-row{border-radius:10px;padding:12px;border:1px solid rgba(0,255,102,0.04);display:grid;grid-template-columns:220px 1fr;gap:14px;margin-bottom:12px;background:transparent;align-items:start}
 
-    /* SKILLS */
-    .skills-accordion{margin-top:12px}
-    .skill-item{border-radius:10px;border:1px solid rgba(0,255,102,0.03);overflow:hidden;margin-top:10px;background:#030d08}
-    .skill-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;color:var(--neon);font-family:var(--mono);font-weight:700}
-    .chev{width:28px;height:28px;border-radius:6px;border:1px solid rgba(0,255,102,0.06);display:flex;align-items:center;justify-content:center;color:var(--neon);font-weight:700}
-    .skill-body{height:0;overflow:hidden;transition:height .32s ease;padding:0 14px;background:#02120b}
-    .skill-body-inner{padding:12px 0;display:flex;flex-wrap:wrap;gap:10px}
-    .skill-badge{
-      padding:8px 12px;border-radius:999px;border:1px solid rgba(0,255,102,0.12);color:var(--neon);font-family:var(--mono);background:transparent;
-      opacity:0; transform:translateY(8px); transition:opacity .32s ease, transform .32s ease;
-    }
-    .skill-badge.show{opacity:1;transform:translateY(0)}
+    /* stack/projects */
+    .stack-panel{padding:12px}
+    .projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:12px;align-items:stretch}
+    .project-card{border-radius:12px;padding:16px;background:transparent;border:1px solid rgba(0,255,102,0.04);box-shadow:inset 0 0 18px rgba(0,0,0,0.12);display:flex;flex-direction:column;justify-content:space-between;min-height:200px;transition:transform .12s ease, box-shadow .12s ease}
+    .project-card:hover{transform:translateY(-6px);box-shadow:0 30px 60px rgba(0,255,102,0.10), inset 0 0 28px rgba(0,255,102,0.02)}
 
-    /* PROJECTS */
-    .projects-list{margin-top:12px;display:flex;flex-direction:column;gap:12px}
-    .proj-row{border-radius:10px;padding:14px;background:#02120b;border:1px solid rgba(0,255,102,0.03);display:flex;justify-content:space-between;gap:12px;align-items:flex-start;font-family:var(--mono)}
-    .proj-left strong{color:var(--neon);display:block}
-    .proj-left .desc{color:var(--muted);margin-top:6px;font-size:13px}
+    .tag-pill{padding:6px 10px;border-radius:8px;border:1px solid rgba(0,255,102,0.06);font-family:var(--mono);font-weight:700;background:rgba(0,0,0,0.25)}
 
-    .proj-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+    /* contact */
+    .contact-grid{display:grid;grid-template-columns:1fr 420px;gap:18px;margin-top:12px;align-items:start;max-width:100%}
+    .contact-left{border-radius:12px;padding:20px;background:transparent;border:1px solid rgba(0,255,102,0.04);color:var(--muted);font-family:var(--mono);line-height:1.7;box-shadow:inset 0 2px 12px rgba(0,0,0,0.4);min-height:220px}
+    .contact-right{border-radius:12px;padding:20px;background:#011017;border:1px solid rgba(0,255,102,0.04);box-shadow:inset 0 6px 18px rgba(0,0,0,0.4)}
+    .form-field input, .form-field textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(0,255,102,0.06);background:rgba(1,16,23,0.6);color:var(--neon);font-family:var(--mono);font-size:14px;box-shadow:inset 0 2px 6px rgba(0,0,0,0.35)}
+    .form-field label{display:block;margin-bottom:8px;color:var(--neon);font-size:12px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase}
+    .send-btn{padding:10px 18px;border-radius:10px;border:none;background:linear-gradient(90deg, var(--neon), #00d25a);color:#00110a;font-weight:800;cursor:pointer;font-family:var(--mono);box-shadow:0 8px 30px rgba(0,255,102,0.12);transition:transform .12s ease, box-shadow .12s ease}
+    .send-btn:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(0,255,102,0.18)}
 
-    .status{padding:6px 10px;border-radius:999px;font-family:var(--mono);font-size:12px}
-    .status.comp{background:rgba(0,255,102,0.06);color:var(--neon);border:1px solid rgba(0,255,102,0.12)}
-    .status.ong{background:rgba(0,230,255,0.04);color:var(--neon-cyan);border:1px solid rgba(0,230,255,0.08)}
-    .status.plan{background:rgba(124,58,237,0.04);color:var(--neon-cyan);border:1px solid rgba(124,58,237,0.06)}
+    /* footer */
+    footer{margin-top:12px;color:rgba(0,255,102,0.6);font-family:var(--mono);font-size:13px}
 
-    .proj-detail{margin-top:8px;padding:12px;border-radius:8px;background:#011007;border:1px solid rgba(0,255,102,0.03);max-height:0;overflow:hidden;transition:max-height .28s ease,opacity .28s ease;opacity:0}
-    .proj-detail.open{max-height:360px;opacity:1}
+    /* responsive */
+    @media (max-width:1100px){.about-card{grid-template-columns:1fr 300px}.projects-grid{grid-template-columns:repeat(2,1fr)}.container{padding:16px}.classic-term{font-size:14px}}
+    @media (max-width:850px){.edu-cards{grid-template-columns:1fr}.projects-grid{grid-template-columns:1fr}.contact-grid{grid-template-columns:1fr}.top-nav{height:56px}.wrap{padding-top:calc(var(--nav-height) + 10px)}.cta-btn{display:none}}
 
-    /* EDUCATION */
-    .edu-card{border-radius:10px;padding:12px;background:#02120b;border:1px solid rgba(0,255,102,0.03)}
+    a:focus, button:focus, input:focus, textarea:focus{outline:2px solid rgba(0,255,102,0.12);outline-offset:2px}
+  .mini-term-panel{border-radius:12px;padding:14px;background:linear-gradient(180deg, rgba(0,18,11,0.9), rgba(0,18,11,0.6));border:1px solid rgba(0,255,102,0.05);box-shadow:0 20px 50px rgba(0,0,0,0.6);font-family:var(--mono);color:var(--neon);margin:10px 0}
+.mini-term-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mini-term-controls{display:flex;gap:8px}
+.mini-term-controls .wc{width:10px;height:10px;border-radius:50%;display:inline-block}
+.mini-term-body{background:rgba(1,16,11,0.25);border-radius:8px;padding:12px;border:1px solid rgba(0,255,102,0.03);min-height:90px;font-size:14px;line-height:1.6}
+.mini-term-line{font-family:var(--mono);color:var(--neon);white-space:pre-wrap}
+.mini-term-meta{font-size:12px;color:rgba(0,255,102,0.6);font-family:var(--mono)}
 
-    /* CERTS */
-    .cert-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
-    .cert-card{padding:12px;border-radius:10px;background:#02120b;border:1px solid rgba(0,255,102,0.03);font-family:var(--mono);color:var(--neon)}
-    .issuer{color:var(--muted);font-size:13px;margin-top:6px}
-
-    aside.panel{position:sticky;top:28px;align-self:start;background:transparent}
-
-    input, textarea{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#06110a;color:var(--neon);font-family:var(--mono);margin-top:8px}
-    textarea{min-height:80px}
-
-    footer{margin-top:18px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-
-    @media(max-width:1000px){
-      .quick-row{grid-template-columns:1fr}
-      .content{grid-template-columns:1fr}
-      .cert-grid{grid-template-columns:1fr}
-    }
-  </style>
+/* small responsive tweak for mini terminal */
+@media(max-width:900px){.mini-term-body{min-height:80px;font-size:13px}} 
+</style>
 </head>
-
 <body>
   <div class="binary" aria-hidden="true"></div>
+
+  <!-- Fixed top nav -->
+  <nav class="top-nav" role="navigation" aria-label="Primary">
+    <div class="top-nav-inner">
+      <div class="window-controls" aria-hidden="true">
+        <span class="wc wc-close"></span>
+        <span class="wc wc-min"></span>
+        <span class="wc wc-max"></span>
+      </div>
+      <div class="nav-links" role="menubar" aria-label="Main links">
+        <a href="#about-section">ABOUT</a>
+        <a href="#skills-section">SKILLS</a>
+        <a href="#projects-section">PROJECTS</a>
+        <a href="#experience-section">EXPERIENCE</a>
+        <a href="#contact-section">CONTACT</a>
+      </div>
+      <button class="cta-btn" id="openRolesBtn" aria-label="Open to roles">OPEN TO ROLES</button>
+      <div class="nav-decor" aria-hidden="true"></div>
+    </div>
+  </nav>
 
   <div class="wrap">
     <div class="container">
 
-      <!-- TOP TERMINAL -->
-      <div class="terminal-panel">
+      <!-- terminal -->
+      <div class="terminal-panel" role="region" aria-label="Terminal">
         <div class="terminal-header">
-          <div class="term-dots"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></div>
+          <div class="term-dots" aria-hidden="true"><span style="width:10px;height:10px;background:#ff6b6b;border-radius:999px;display:inline-block;margin-right:8px"></span><span style="width:10px;height:10px;background:#ffd166;border-radius:999px;display:inline-block;margin-right:8px"></span><span style="width:10px;height:10px;background:var(--neon);border-radius:999px;display:inline-block"></span></div>
           <div class="muted">terminal.app</div>
+          <div style="margin-left:auto;font-size:13px;color:var(--muted)" class="mono">Updated • 2025</div>
         </div>
-
-        <div class="term-window">
-<pre style="margin:0;white-space:pre-wrap;">
-$ whoami
-Yash Chauhan — Purple Team & Security Analyst
+        <div class="classic-term" role="region" aria-label="Terminal output">$ whoami
+Yash Chauhan
+Security Analyst — Purple Team
 
 $ role
-Hybrid Red & Blue Operations
-Incident Response • Detection Engineering • VAPT
+Hybrid: Red & Blue Operations
+Vulnerability Assessment · Detection Engineering · Incident Handling
 
 $ mission
-Bridge offensive insights with defensive engineering.
-Deliver measurable detections, validated coverage,
-and hardened cloud/CDN environments.
-
-$ echo "Secure. Detect. Respond. Improve."
-</pre>
-        </div>
+Bridge offensive insights with defensive engineering — secure, detect, respond, improve.</div>
       </div>
 
-      <!-- QUICK ACTIONS -->
-      <div class="quick-row">
-        <div class="quick-card">
-          <h4>Request Assessment</h4>
-          <p>Request a VAPT or detection review.</p>
-          <button class="btn" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Go to Services</button>
-        </div>
-
-        <div class="quick-card">
-          <h4>Book IR Retainer</h4>
-          <p>Need rapid incident support?</p>
-          <button class="btn" onclick="window.location.href='mailto:yash222000.yc@gmail.com?subject=IR Retainer'">Email to Book</button>
-        </div>
-
-        <div class="quick-card">
-          <h4>SOC Onboarding</h4>
-          <p>Interested in SOC setup?</p>
-          <button class="btn" onclick="document.getElementById('skills').scrollIntoView({behavior:'smooth'})">Learn More</button>
-        </div>
-      </div>
-
-      <div class="content">
-        <main class="panel">
-
-          <!-- ABOUT -->
-          <h2 id="about-title">About</h2>
-
-          <div class="terminal-panel" style="padding:12px 18px 16px;">
-            <div class="terminal-header">
-              <div class="term-dots"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></div>
-              <div class="muted">terminal.app — about.txt</div>
-            </div>
-
-            <div class="term-window" style="max-height:260px;">
-<pre style="margin:0;white-space:pre-wrap;">
-Security Analyst with strong expertise in Incident Response, SOC operations, Cloud Security, and VAPT...
-</pre>
-            </div>
+      <!-- ABOUT -->
+      <section id="about-section" class="about-card" aria-label="About">
+        <span class="section-anchor" id="about-section-anchor"></span>
+        <div class="about-left">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <h1 class="site-title">WHO I AM &amp; HOW I WORK</h1>
+            <p class="muted" style="max-width:420px;text-align:right;font-size:13px">A brief overview of my approach, mindset and working philosophy.</p>
           </div>
-
-          <!-- SERVICES -->
-          <h3 id="services">Services</h3>
-
-          <div class="services">
-            <div class="service-box"><strong>Incident Response</strong><div class="muted">Triage • Containment • Forensics</div></div>
-            <div class="service-box"><strong>SOC Operations</strong><div class="muted">Detection Tuning • ELK • Wazuh</div></div>
-            <div class="service-box"><strong>Cloud Security</strong><div class="muted">AWS • Cloudflare • CDN</div></div>
-            <div class="service-box"><strong>VAPT</strong><div class="muted">Web • API • Network</div></div>
-          </div>
-
-          <!-- SKILLS -->
-          <h3 id="skills" style="margin-top:18px">Core Skills & Tools</h3>
-          <div class="skills-accordion">
-            <!-- ... unchanged accordion code ... -->
-          </div>
-
-          <!-- PROJECTS -->
-          <h3 style="margin-top:18px">Projects</h3>
-          <div class="projects-list">
-            <!-- ... unchanged project cards ... -->
-          </div>
-
-          <!-- EDUCATION -->
-          <h3 style="margin-top:18px">Education</h3>
-          <div class="edu-card">
-            <strong>Parul University</strong>
-            <div class="muted">B.Tech — CSE</div>
-          </div>
-
-          <!-- CERTS -->
-          <h3 style="margin-top:18px">Certificates</h3>
-          <div class="cert-grid">
-            <div class="cert-card"><strong>CompTIA Security+</strong><div class="issuer">CompTIA</div></div>
-            <div class="cert-card"><strong>AWS Cloud Practitioner</strong><div class="issuer">Amazon</div></div>
-            <div class="cert-card"><strong>AWS Security Fundamentals</strong><div class="issuer">AWS</div></div>
-            <div class="cert-card"><strong>Python Essentials</strong><div class="issuer">IBM</div></div>
-            <div class="cert-card"><strong>Ethical Hacking</strong><div class="issuer">Parul University</div></div>
-          </div>
-
-        </main>
-
-        <!-- SIDEBAR -->
-        <aside class="panel">
-
-          <div class="terminal-panel" style="padding:14px;">
-            <div style="font-family:var(--mono);color:var(--neon);margin-bottom:8px">Socials & Resume</div>
-
-            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
-              <a href="https://www.linkedin.com/in/yash-chauhan-829794164" style="color:var(--neon);text-decoration:none;font-family:var(--mono)">LinkedIn</a>
-              <a href="https://github.com/YOUR_GITHUB" style="color:var(--neon);text-decoration:none;font-family:var(--mono)">GitHub</a>
-              <a href="#" style="color:var(--neon);text-decoration:none;font-family:var(--mono)">Twitter</a>
-            </div>
-
-            <!-- ⭐ Download Resume REMOVED here ⭐ -->
-            <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
-              <button id="copyEmail" class="btn">Copy email</button>
-              <span id="copyStatus" class="muted" style="margin-left:8px"></span>
-            </div>
-
-            <div style="margin-top:6px">
-              <div style="font-family:var(--mono);color:var(--neon);margin-bottom:8px">Contact</div>
-
-              <form id="contactForm" onsubmit="return handleSubmit(event)">
-                <input type="text" id="hp" name="hp" style="display:none" autocomplete="off" />
-                <input id="name" name="name" type="text" placeholder="Your name" required />
-                <input id="email" name="email" type="email" placeholder="Your email" required />
-                <input id="subject" name="subject" type="text" placeholder="Subject" required />
-                <textarea id="message" name="message" placeholder="Message" required></textarea>
-
-                <div class="muted" style="font-size:12px;margin-top:8px">
-                  This will open your email app prefilled to <strong>yash222000.yc@gmail.com</strong>.
-                </div>
-
-                <div style="margin-top:12px"><button class="btn" type="submit">Open email app</button></div>
-                <div id="status" class="muted" style="margin-top:8px"></div>
-              </form>
-
-            </div>
+          <p style="margin-top:12px">As a Security Analyst and Purple Teamer with hands-on experience in vulnerability assessment, detection engineering and incident handling, I focus on securing cloud and web-facing environments. My work spans VAPT, WAF hardening, log analysis and IR across AWS and CDN infrastructures.</p>
+          <p>I design and validate detection rules, run realistic attack simulations to find real-world gaps, and translate technical findings into prioritized, actionable remediation. Comfortable with Cloudflare, Akamai, Imperva, AWS, ELK, Wazuh, and modern pentest tooling.</p>
 
           </div>
 
+        <aside class="about-right">
+          <div class="meta"><h3 class="sub">CURRENT ROLE</h3><p style="margin-top:10px;color:var(--neon);font-weight:700" id="current-role-anchor">Associate Security Operations Specialist @ IDX</p></div>
+          <div class="meta"><h3 class="sub">PRIMARY STRENGTHS</h3><p style="margin-top:10px;color:var(--neon);font-weight:600">VAPT · WAF rule management · Log Analysis · Incident Response</p></div>
+          <div class="meta"><h3 class="sub">LOCATION</h3><p style="margin-top:10px;color:var(--neon);font-weight:600">Vadodara, Gujarat, India</p></div>
         </aside>
-      </div>
+      </section>
+
+      <!-- EDUCATION -->
+      <section class="edu-outer" aria-label="Education">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <h2 class="section-title">Education &amp; Certifications<br><small class="muted" style="font-family:var(--mono);font-size:13px">How I’ve built my foundation</small></h2>
+          <p class="muted" style="max-width:420px;text-align:right">My academic background and certifications that strengthen my technical foundation.</p>
+        </div>
+
+        <div class="edu-cards" style="margin-top:14px">
+          <div class="edu-card" style="padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid rgba(0,255,102,0.18);box-shadow:0 6px 24px rgba(0,255,102,0.03);min-height:140px;" id="education-anchor">
+            <div style="font-size:20px;margin-bottom:6px">🎓</div>
+            <div style="text-align:center">
+              <h4 style="margin:0;font-size:15px;color:var(--neon)">Education</h4>
+              <p style="color:var(--muted);margin-top:10px;font-size:14px;line-height:1.4;text-align:center">Parul University<br><em style="font-weight:700">B.Tech — Computer Science &amp; Engineering</em><br>Sep 2021 — Sep 2025</p>
+            </div>
+          </div>
+
+          <div class="edu-card" style="padding:18px;flex:1;min-height:140px;border:1px solid rgba(0,255,102,0.18);box-shadow:0 6px 24px rgba(0,255,102,0.03);">
+            <h4 style="margin-bottom:8px">Academic Summary</h4>
+            <p style="color:var(--muted);line-height:1.6;margin:0;font-size:15px">Bachelor of Technology (B.Tech) — Computer Science &amp; Engineering, Parul University. Coursework focused on networking, operating systems, databases and applied cybersecurity topics. Expected graduation: Sep 2025.</p>
+          </div>
+        </div>
+
+        <div class="edu-card" style="margin-top:16px;padding:16px;background:#021016;border:1px solid rgba(255,255,255,0.03);box-shadow:inset 0 0 20px rgba(0,0,0,0.15);border-radius:12px;color:var(--neon);" id="certifications-anchor">
+          <h4 style="margin:0 0 8px">Certifications</h4>
+          <div class="cert-collection" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;align-items:start;">
+            <div class="edu-card" style="padding:12px;min-height:96px;display:flex;flex-direction:column;justify-content:center;">
+              <strong style="font-size:14px">CompTIA</strong>
+              <p style="color:var(--muted);margin-top:8px;font-size:13px;line-height:1.3">Foundation IT & cybersecurity fundamentals across platforms and environments.</p>
+            </div>
+
+            <div class="edu-card" style="padding:12px;min-height:96px;display:flex;flex-direction:column;justify-content:center;">
+              <strong style="font-size:14px">AWS Cloud Practitioner</strong>
+              <p style="color:var(--muted);margin-top:8px;font-size:13px;line-height:1.3">AWS fundamentals, core services, and cloud security basics.</p>
+            </div>
+
+            <div class="edu-card" style="padding:12px;min-height:96px;display:flex;flex-direction:column;justify-content:center;">
+              <strong style="font-size:14px">AWS Security Fundamentals</strong>
+              <p style="color:var(--muted);margin-top:8px;font-size:13px;line-height:1.3">IAM, logging, monitoring and recommended cloud security controls.</p>
+            </div>
+
+            <div class="edu-card" style="padding:12px;min-height:96px;display:flex;flex-direction:column;justify-content:center;">
+              <strong style="font-size:14px">Programming Using Python</strong>
+              <p style="color:var(--muted);margin-top:8px;font-size:13px;line-height:1.3">Python fundamentals for automation and data processing tasks.</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- EXPERIENCE -->
+      <section id="experience-section" aria-label="Experience">
+        <span class="section-anchor" id="experience-section-anchor"></span>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <h2 class="section-title" style="margin-top:6px">WHERE I'VE APPLIED SECURITY</h2>
+          <p class="muted" style="max-width:420px;text-align:right">Roles and hands-on positions where I practiced real-world security operations.</p>
+        </div>
+
+        <div class="experience-panel" style="margin-top:12px">
+
+          <div class="exp-row">
+            <div class="exp-meta">
+              <strong>Security Analyst</strong>
+              <div style="font-style:italic;color:var(--muted);margin-top:6px">IDX™ | Vadodara, Gujarat, India</div>
+              <div style="margin-top:8px;color:var(--muted)">Feb 2025 — Present</div>
+            </div>
+            <div class="exp-body">
+              <h4>Incident Response · Cloud Security · VAPT</h4>
+              <ul style="margin-top:8px;color:var(--muted);padding-left:18px">
+                <li>Specialized in Incident Response, Cloud Security, and VAPT within high-availability CDN environments.</li>
+                <li>Skilled in threat monitoring, log analysis, and cyber-attack mitigation using Cloudflare, WAF technologies, AWS, and Linux.</li>
+                <li>Experienced in detecting and responding to security incidents, performing security testing, and analyzing network traffic.</li>
+                <li>Strengthened data protection across distributed systems by improving monitoring, validation, and response workflows.</li>
+                <li>Built automated detection logic using regex and advanced tooling to reduce response time and enhance overall security posture.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="exp-row">
+            <div class="exp-meta">
+              <strong>Security Operations Center Analyst</strong>
+              <div style="font-style:italic;color:var(--muted);margin-top:6px">KERYAR — Anand, Gujarat</div>
+              <div style="margin-top:8px;color:var(--muted)">Jan 2025 — Jun 2025</div>
+            </div>
+            <div class="exp-body">
+              <h4>Real-time Monitoring · SOC Triage</h4>
+              <ul style="margin-top:8px;color:var(--muted);padding-left:18px">
+                <li>Hands-on experience in real-time threat monitoring, incident handling, and security event correlation using ELK, Wazuh, Suricata, and ModSecurity.</li>
+                <li>Strong knowledge of Network Security, OWASP Top 10, and Vulnerability Assessment across web applications and infrastructure.</li>
+                <li>Proven ability to collaborate during live security incidents, analyze alerts, and improve SOC efficiency through refined detection rules.</li>
+                <li>Enhanced SOC playbooks and workflows by tuning detection logic and improving alert accuracy.</li>
+                <li>Skilled in Linux, CDN security, and web application protection through WAF tuning and proactive threat prevention.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="exp-row">
+            <div class="exp-meta">
+              <strong>THMxPU Core Member</strong>
+              <div style="font-style:italic;color:var(--muted);margin-top:6px">The Hackers Meetup — Parul University</div>
+              <div style="margin-top:8px;color:var(--muted)">Aug 2024 — Jan 2025</div>
+            </div>
+            <div class="exp-body">
+              <h4>Community & Event Coordination</h4>
+              <ul style="margin-top:8px;color:var(--muted);padding-left:18px">
+                <li>Contributed to the cybersecurity community through event management, security awareness sessions, and technical knowledge-sharing.</li>
+                <li>Coordinated workshops and cybersecurity events, ensuring smooth planning and execution.</li>
+                <li>Recognized for strong organizational skills, effective community engagement, and promoting security best practices among students and professionals.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="exp-row">
+            <div class="exp-meta">
+              <strong>Phishing & E-mail Security</strong>
+              <div style="font-style:italic;color:var(--muted);margin-top:6px">Mastercard — Vadodara, Gujarat, India</div>
+              <div style="margin-top:8px;color:var(--muted)">Sep 2024 — Sep 2024</div>
+            </div>
+            <div class="exp-body">
+              <h4>Phishing Simulations & Threat Response</h4>
+              <ul style="margin-top:8px;color:var(--muted);padding-left:18px">
+                <li>Trained in phishing simulations, social engineering detection, and email-based threat response.</li>
+                <li>Hands-on experience with Gophish, SET, and phishing incident handling workflows to improve employee security behavior.</li>
+                <li>Skilled in analyzing phishing indicators, supporting investigations, and strengthening organizational awareness.</li>
+                <li>Helped reduce human-factor vulnerabilities through proactive simulations, reporting, and awareness activities.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SKILLS -->
+      <section id="skills-section" aria-label="Skills">
+        <span class="section-anchor" id="skills-section-anchor"></span>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <h2 class="section-title" style="margin-top:18px">SECURITY STACK I WORK WITH</h2>
+          <p class="muted" style="max-width:420px;text-align:right">Tools and technologies I regularly use for assessment, monitoring and response.</p>
+        </div>
+        <div class="stack-panel" style="margin-top:12px">
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <div class="tag-pill">Vulnerability Assessment & Pentesting (VAPT)</div>
+            <div class="tag-pill">Web Application Firewall (WAF)</div>
+            <div class="tag-pill">Incident Response</div>
+            <div class="tag-pill">Log Analysis</div>
+            <div class="tag-pill">Intrusion Detection & Prevention (IDPS)</div>
+            <div class="tag-pill">False Positive Analysis</div>
+            <div class="tag-pill">Root Cause Analysis</div>
+            <div class="tag-pill">Acunetix</div>
+            <div class="tag-pill">Nessus</div>
+            <div class="tag-pill">Burp Suite</div>
+            <div class="tag-pill">Metasploit</div>
+            <div class="tag-pill">Kali Linux</div>
+            <div class="tag-pill">AWS Inspector</div>
+            <div class="tag-pill">AWS GuardDuty</div>
+            <div class="tag-pill">AWS Detective</div>
+            <div class="tag-pill">Cloudflare</div>
+            <div class="tag-pill">Imperva</div>
+            <div class="tag-pill">Akamai</div>
+            <div class="tag-pill">Fastly</div>
+            <div class="tag-pill">AWS WAF</div>
+            <div class="tag-pill">SocRadar</div>
+            <div class="tag-pill">BitSight</div>
+            <div class="tag-pill">Panorays</div>
+            <div class="tag-pill">Symantec Endpoint</div>
+            <div class="tag-pill">SIEM: Akamai WSA</div>
+            <div class="tag-pill">SIEM: ELK Stack</div>
+            <div class="tag-pill">Patch Management</div>
+            <div class="tag-pill">Cloud Security (AWS)</div>
+            <div class="tag-pill">Training & Awareness</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROJECTS -->
+      <section id="projects-section" aria-label="Projects">
+        <div class="mini-term-panel" aria-hidden="false" data-mock-url="/mnt/data/c3bed3a0-aa68-4a4c-82cb-1e463f6a14d1.png">
+          <div class="mini-term-header">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="mini-term-controls">
+                <span class="wc wc-close" style="background:linear-gradient(180deg,#ff605c,#ff3b30)"></span>
+                <span class="wc wc-min" style="background:linear-gradient(180deg,#ffbd2e,#ffb21a)"></span>
+                <span class="wc wc-max" style="background:linear-gradient(180deg,#2bd24a,#00c851)"></span>
+              </div>
+              <div class="mini-term-meta">Terminal snippets • quick highlights</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:13px;color:rgba(0,255,102,0.85);">Live snippets</div>
+          </div>
+          <div class="mini-term-body">
+            <pre id="mini-term-output" class="mini-term-line" aria-live="polite"></pre>
+          </div>
+        </div>
+
+        <div class="projects-grid" style="margin-top:12px">
+          <div class="project-card">
+            <div>
+              <div style="font-size:12px;color:var(--muted)">VAPT • WEB APPLICATIONS</div>
+              <h4 style="margin-top:8px;color:var(--neon)">End-to-end VAPT</h4>
+              <p style="margin-top:8px;color:var(--muted)">Vulnerability assessments and penetration testing on customer web apps; remediation coordination and reporting.</p>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px"><div class="tag-pill">Acunetix</div><div class="tag-pill">Burp</div></div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div style="font-size:12px;color:var(--muted)">CLOUD SECURITY</div>
+              <h4 style="margin-top:8px;color:var(--neon)">AWS Posture Hardening</h4>
+              <p style="margin-top:8px;color:var(--muted)">Implemented Inspector & GuardDuty checks, triaged findings, and reduced exposure.</p>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px"><div class="tag-pill">Inspector</div><div class="tag-pill">GuardDuty</div></div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div style="font-size:12px;color:var(--muted)">WAF & EDGE</div>
+              <h4 style="margin-top:8px;color:var(--neon)">WAF Rule Management</h4>
+              <p style="margin-top:8px;color:var(--muted)">Tuned multi-vendor WAF rules to balance blocking and false-positive rates.</p>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px"><div class="tag-pill">Fastly</div><div class="tag-pill">Cloudflare</div></div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div style="font-size:12px;color:var(--muted)">THREAT INTEL • SIEM</div>
+              <h4 style="margin-top:8px;color:var(--neon)">Threat Monitoring with SocRadar, Darknet & ELK</h4>
+              <p style="margin-top:8px;color:var(--muted)">Monitored Darknet and threat intelligence feeds using SocRadar and Telegram, integrated logs into ELK / Akamai WSA, and built dashboards and alerts to detect suspicious patterns early and support SOC investigations.</p>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px"><div class="tag-pill">SocRadar</div><div class="tag-pill">ELK</div><div class="tag-pill">Akamai WSA</div></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section id="contact-section" aria-label="Contact">
+        <span class="section-anchor" id="contact-section-anchor"></span>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <h2 class="section-title" style="margin-top:18px">LET'S TALK SECURITY</h2>
+          <p class="muted" style="max-width:420px;text-align:right">Get in touch if you'd like to collaborate or need security expertise.</p>
+        </div>
+        <div class="contact-grid" style="margin-top:12px">
+          <div class="contact-left">
+            <p style="margin-top:6px;color:var(--muted)">If you need someone who lives in the logs, understands WAFs and cloud security tools, and can translate technical findings into clear actions, I'd be happy to connect.</p>
+            <p style="margin-top:10px">Email: <a href="mailto:yash222000.yc@gmail.com" style="color:var(--neon)">yash222000.yc@gmail.com</a> &nbsp;&nbsp; Phone: <span style="color:var(--neon)">+91 94295 03293</span></p>
+          </div>
+
+          <div class="contact-right" aria-label="Contact form">
+            <form id="contactForm" onsubmit="return handleSubmit(event)">
+              <div class="form-field"><label class="muted" style="font-size:12px;letter-spacing:1px">NAME</label><input id="name" name="name" type="text" placeholder="Your name" required /></div>
+              <div class="form-field"><label class="muted" style="font-size:12px;letter-spacing:1px">EMAIL</label><input id="email" name="email" type="email" placeholder="you@example.com" required /></div>
+              <div class="form-field"><label class="muted" style="font-size:12px;letter-spacing:1px">MESSAGE</label><textarea id="message" name="message" placeholder="How can I help you?" required rows="5"></textarea></div>
+              <div style="margin-top:6px"><button class="send-btn" type="submit">SEND MESSAGE</button></div>
+              <div id="status" class="muted" style="margin-top:12px"></div>
+            </form>
+          </div>
+        </div>
+      </section>
 
       <footer>
         <div class="muted mono">Built with neon terminal vibe • Hosted on GitHub Pages</div>
-        <div class="muted mono">Resume: <code>/mnt/data/Yash Chauhan - Security Analyst Resume.pdf</code></div>
+        <div class="muted mono">© 2025 Yash Chauhan • Vadodara, India</div>
       </footer>
 
     </div>
   </div>
 
-<script>
-/* copy email */
-document.getElementById('copyEmail').addEventListener('click', async function(){
-  try{
-    await navigator.clipboard.writeText('yash222000.yc@gmail.com');
-    const s = document.getElementById('copyStatus');
-    s.textContent = 'Copied!';
-    setTimeout(()=> s.textContent = '', 2000);
-  }catch(e){
-    document.getElementById('copyStatus').textContent = 'Copy failed';
+  <script>
+(function(){
+  const links = Array.from(document.querySelectorAll('.nav-links a'));
+  const sectionIds = links.map(l => (l.getAttribute('href')||'').replace(/^#/, '')).filter(Boolean);
+  const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+  function setActive(id){
+    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
   }
+
+  // Click behavior: smooth scroll and set active. Temporarily ignore observer while programmatic scroll happens
+  let ignoreObserverUntil = 0;
+  links.forEach(a => {
+    a.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const target = (a.getAttribute('href')||'').replace(/^#/, '');
+      const el = document.getElementById(target);
+      if (el) {
+        // mark to ignore observer for 600ms to avoid race with IntersectionObserver
+        ignoreObserverUntil = Date.now() + 600;
+        el.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      setActive(target);
+      try{ history.replaceState(null, '', '#' + target); } catch(e){}
+    });
+  });
+
+  // Use IntersectionObserver for reliable active state, but respect ignore window
+  const observerOpts = { root: null, rootMargin: '0px 0px -45% 0px', threshold: 0 };
+  let activeId = sectionIds[0] || null;
+
+  const io = new IntersectionObserver((entries) => {
+    if(Date.now() < ignoreObserverUntil) return; // skip while scrolling via click
+    let visible = entries.filter(e => e.isIntersecting).sort((a,b)=> b.intersectionRatio - a.intersectionRatio);
+    if(visible.length){
+      const id = visible[0].target.id;
+      if(id !== activeId){ activeId = id; setActive(id); }
+      return;
+    }
+    const scrollPos = window.scrollY + (window.innerHeight * 0.15);
+    let last = null; sections.forEach(s => { if(s.offsetTop <= scrollPos) last = s; });
+    if(last && last.id !== activeId){ activeId = last.id; setActive(last.id); }
+  }, observerOpts);
+
+  sections.forEach(s => io.observe(s));
+
+  // On load, honour hash and ensure active
+  window.addEventListener('load', ()=>{
+    const hash = location.hash.replace(/^#/, '');
+    if(hash){ const el = document.getElementById(hash); if(el){ ignoreObserverUntil = Date.now() + 600; setTimeout(()=>{ el.scrollIntoView({behavior:'smooth', block:'start'}); setActive(hash); }, 60); return; } }
+    setTimeout(()=>{
+      sections.forEach(s => {
+        const rect = s.getBoundingClientRect(); if(rect.top <= window.innerHeight*0.5 && rect.bottom > window.innerHeight*0.2){ setActive(s.id); activeId = s.id; }
+      });
+    }, 80);
+  });
+
+})();
+
+// Mini terminal typing + rotate snippets
+document.addEventListener('DOMContentLoaded', function(){
+  const out = document.getElementById('mini-term-output');
+  if(!out) return;
+  const snippets = [
+    "$ watch -n 2 tail -n 50 /var/log/auth.log\n[INFO] 2025-06-02T12:24:11Z sshd[2245]: Accepted password for yash from 198.51.100.14 port 55812 ssh2",
+    "$ sudo journalctl -u suricata -f\n[ALERT] 2025-06-02T12:25:02Z Suricata: ET SCAN Suspicious inbound connection from 203.0.113.45",
+    "$ curl -s https://ti-feed.example/api/latest | jq '.top_iocs'\n[IOC] 2025-06-02T12:30:03Z - 203.0.113.45 (malicious)",
+    "$ ./deploy_check.sh\n[OK] 2025-06-02T12:35:11Z - WAF rules synced to edge"
+  ];
+
+  let idx = 0;
+  const typeSpeed = 14;
+  const pauseAfter = 1200;
+
+  function typeText(text, cb){
+    out.textContent = '';
+    let i = 0;
+    const timer = setInterval(()=>{
+      i++;
+      out.textContent = text.slice(0, i) + '▌';
+      if(i >= text.length){
+        clearInterval(timer);
+        // remove caret and call callback after pause
+        out.textContent = text;
+        setTimeout(cb, pauseAfter);
+      }
+    }, typeSpeed);
+  }
+
+  function next(){
+    typeText(snippets[idx], ()=>{
+      idx = (idx + 1) % snippets.length;
+      setTimeout(next, 400);
+    });
+  }
+
+  // ensure visible and start
+  out.style.visibility = 'visible';
+  setTimeout(next, 400);
 });
-
-/* contact handler */
-const RECEIVER = "yash222000.yc@gmail.com";
-function handleSubmit(e){
-  e.preventDefault();
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const subject = document.getElementById('subject').value.trim() || "Website contact";
-  const message = document.getElementById('message').value.trim();
-
-  const fullSubject = `${subject} — from ${name}`;
-  const body = `Name: ${name}\nEmail: ${email}\n\n${message}\n\n---\nSent from portfolio`;
-
-  window.location.href =
-    `mailto:${RECEIVER}?subject=${encodeURIComponent(fullSubject)}&body=${encodeURIComponent(body)}`;
-  return false;
-}
 </script>
-
 </body>
 </html>
