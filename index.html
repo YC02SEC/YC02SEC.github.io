@@ -1,3 +1,4 @@
+<!-- debug image path: /mnt/data/fc8b52a4-3fb9-4540-8902-08159d867b7e.png -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
   <title>Yash Chauhan — Security Analyst</title>
   <meta name="description" content="Yash Chauhan — Security Analyst. Incident Response, SOC, Cloud & VAPT." />
   <meta name="author" content="Yash Chauhan" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23001106'/%3E%3Ctext x='50%' y='55%' font-family='monospace' font-size='14' fill='%2300ff66' text-anchor='middle'%3E▌%3C/text%3E%3C/svg%3E">
   <style>
     :root{
       --bg: #000906;
@@ -14,47 +16,70 @@
       --neon-strong: #00ff66;
       --muted:#88bfa0;
       --muted-fg:#c8ffe4;
-      --mono: "Courier New", Courier, monospace;
+      --mono: "Fira Code", "JetBrains Mono", monospace;
       --max-width: 1200px;
       --gutter: 20px;
       --nav-height: 64px;
       --radius: 12px;
       --section-gap: 18px;
+      --pill-left: 0px;
+      --pill-width: 0px;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;background:radial-gradient(1200px 500px at 5% 6%, rgba(0,255,102,0.02), transparent), var(--bg);color:var(--neon);font-family:var(--mono);-webkit-font-smoothing:antialiased;scroll-behavior:smooth;line-height:1.6;font-size:16px}
 
-    /* Top navigation (terminal-tab style) */
-    .top-nav{position:fixed;inset-inline:0;top:0;height:var(--nav-height);display:flex;align-items:center;z-index:999;background:linear-gradient(180deg, rgba(0,6,4,0.95), rgba(0,12,8,0.95));padding:8px 16px;border-bottom:1px solid rgba(0,255,102,0.04);backdrop-filter:none} 
-    .top-nav-inner{width:100%;max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;gap:18px}
+    /* Skip link for keyboard users */
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:8px;top:8px;width:auto;height:auto;padding:8px 12px;background:#00120b;color:var(--neon);z-index:99999;border-radius:6px}
 
-    /* small terminal window controls (close, minimize, maximize) */
+    /* Scanlines + neon grid (reduced) */
+    .scanlines{pointer-events:none;position:fixed;inset:0;z-index:1;background-image:repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 1px, rgba(0,255,102,0.006) 1px 3px);mix-blend-mode:overlay;opacity:0.28}
+    .neon-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(ellipse at center, rgba(0,255,102,0.01), transparent 25%), linear-gradient(transparent 1px, rgba(0,255,102,0.003) 1px);background-size:100% 100%;opacity:0.30}
+
+    /* subtle floating radial behind hero for depth (softer) */
+    .hero-glow{position:fixed;left:50%;top:16vh;transform:translateX(-50%);width:1100px;height:420px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(closest-side, rgba(0,255,102,0.02), transparent 40%);mix-blend-mode:screen;filter:blur(28px);opacity:0.35}
+
+    /* Top navigation (terminal-tab style) */
+    .top-nav{position:fixed;inset-inline:0;top:0;height:var(--nav-height);display:flex;align-items:center;z-index:999;background:linear-gradient(180deg, rgba(0,6,4,0.95), rgba(0,12,8,0.95));padding:8px 16px;border-bottom:1px solid rgba(0,255,102,0.04)} 
+    .top-nav-inner{width:100%;max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;gap:18px;position:relative}
+
     .window-controls{display:flex;gap:8px;align-items:center;margin-right:8px}
     .window-controls .wc{width:12px;height:12px;border-radius:50%;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.6);border:1px solid rgba(0,0,0,0.4)}
     .window-controls .wc-close{background:linear-gradient(180deg,#ff605c,#ff3b30)}
     .window-controls .wc-min{background:linear-gradient(180deg,#ffbd2e,#ffb21a)}
     .window-controls .wc-max{background:linear-gradient(180deg,#2bd24a,#00c851)}
 
-    .nav-links{display:flex;gap:12px;align-items:center;font-family:var(--mono);font-size:14px}
-    .nav-links a{color:var(--neon);text-decoration:none;padding:10px 14px;border-radius:12px;background:rgba(0,0,0,0.32);border:1px solid rgba(0,255,102,0.02)} .nav-links a:hover{background:rgba(0,255,102,0.06)}
-    .nav-links a:hover{background:rgba(0,255,102,0.03)}
-    .nav-links a.active{color:#00110a;background:linear-gradient(90deg, var(--neon) 0%, #00e052 100%);box-shadow:0 12px 40px rgba(0,255,102,0.06);font-weight:700}
-    .cta-btn{margin-left:auto;padding:8px 14px;border-radius:999px;border:none;background:linear-gradient(90deg, var(--neon), #00d25a);color:#00110a;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:var(--mono)}
+    .nav-links{display:flex;gap:12px;align-items:center;font-family:var(--mono);font-size:14px;position:relative}
+    .nav-links a{color:var(--neon);text-decoration:none;padding:10px 14px;border-radius:12px;background:rgba(0,0,0,0.32);border:1px solid rgba(0,255,102,0.02);position:relative;z-index:2} .nav-links a:hover{background:rgba(0,255,102,0.06)}
 
-    
+    /* Animated nav pill */
+    .nav-links::after{content:"";position:absolute;left:var(--pill-left);top:6px;width:var(--pill-width);height:42px;border-radius:12px;background:linear-gradient(90deg,var(--neon),#00d25a);box-shadow:0 12px 40px rgba(0,255,102,0.06);z-index:1;transition:left .18s ease,width .18s ease,opacity .18s ease;opacity:0.10}
+
+    .cta-btn{margin-left:auto;padding:10px 22px;border-radius:999px;border:none;background:linear-gradient(90deg, var(--neon), #00d25a);color:#00110a;font-weight:700;letter-spacing:0.8px;cursor:pointer;font-family:var(--mono);font-size:14px;text-decoration:none;box-shadow:0 0 12px rgba(0,255,102,0.25);transition:all .18s ease;}
+    .cta-btn.pulse{animation: pulse 2.2s infinite}
+    @keyframes pulse{0%{box-shadow:0 0 6px rgba(0,255,102,0.08)}50%{box-shadow:0 0 24px rgba(0,255,102,0.16)}100%{box-shadow:0 0 6px rgba(0,255,102,0.08)}}
+
+    /* small social group inside nav (icon text) */
+    .socials{display:flex;gap:8px;align-items:center;margin-left:12px}
+    .socials a{font-size:13px;padding:8px;border-radius:8px;background:rgba(0,0,0,0.18);border:1px solid rgba(0,255,102,0.02);color:var(--neon);text-decoration:none}
 
     /* Layout */
     .wrap{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:calc(var(--nav-height) + 18px) 20px 36px}
     .container{width:100%;max-width:var(--max-width);margin:0 auto;position:relative;padding:var(--gutter);display:flex;flex-direction:column;gap:var(--section-gap)}
     .mono{font-family:var(--mono)}
     .muted{color:rgba(0,255,102,0.55);font-size:14px}
-    .binary{position:fixed;inset:0;z-index:0;opacity:0.02;pointer-events:none;background-image:repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0 1px, transparent 1px 14px)}
+    .binary{position:fixed;inset:0;z-index:0;opacity:0.01;pointer-events:none;background-image:repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0 1px, transparent 1px 14px)}
 
     /* Terminal full-width hero */
-    .terminal-panel{border-radius:14px;background:linear-gradient(180deg, rgba(0,18,11,0.95), rgba(0,18,11,0.85));border:1px solid rgba(0,255,102,0.06);padding:20px 22px;box-shadow:0 30px 80px rgba(0,0,0,0.6);font-family:var(--mono);color:var(--neon);z-index:2;margin-bottom:6px;width:100%;}
+    .terminal-panel{border-radius:14px;background:linear-gradient(180deg, rgba(0,18,11,0.95), rgba(0,18,11,0.85));border:1px solid rgba(0,255,102,0.06);padding:20px 22px;box-shadow:0 30px 80px rgba(0,0,0,0.6);font-family:var(--mono);color:var(--neon);z-index:2;margin-bottom:6px;width:100%;position:relative}
     .terminal-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-    .classic-term{background:transparent;border-radius:8px;padding:18px;border:1px solid rgba(0,255,102,0.03);font-family:var(--mono);color:var(--neon);box-shadow:inset 0 0 30px rgba(0,255,102,0.02);font-size:15px;line-height:1.8;white-space:pre-wrap;overflow:visible;}
+    .classic-term{background:transparent;border-radius:8px;padding:18px;border:1px solid rgba(0,255,102,0.03);font-family:var(--mono);color:var(--neon);box-shadow:inset 0 0 30px rgba(0,255,102,0.02);font-size:15px;line-height:1.8;white-space:pre-wrap;overflow:visible}
+
+    /* Neon flicker */
+    .neon {text-shadow:0 0 8px rgba(0,255,102,0.95),0 0 30px rgba(0,255,102,0.12);}
+    .neon-flicker{animation:neon-flicker 3s infinite}
+    @keyframes neon-flicker{0%,19%,21%,23%,100%{text-shadow:0 0 8px rgba(0,255,102,0.95),0 0 30px rgba(0,255,102,0.12)}20%{text-shadow:none;opacity:0.94;transform:translateY(0.5px)}22%{text-shadow:0 0 3px rgba(0,255,102,0.6);opacity:0.98}}
 
     /* Section titles styled like terminal headings */
     h1.site-title{font-family:var(--mono);color:var(--neon);font-size:22px;margin:0;font-weight:800;letter-spacing:0.8px}
@@ -64,10 +89,18 @@
     p{color:#9fffd1;margin:0 0 12px;font-size:15px}
 
     /* Cards unified terminal style */
-    .about-card, .edu-outer, .experience-panel, .stack-panel, .project-card, .contact-left, .contact-right{background:linear-gradient(180deg, rgba(0,12,8,0.6), rgba(0,12,8,0.3));border:1px solid rgba(0,255,102,0.04);border-radius:12px;padding:16px;box-shadow:inset 0 2px 18px rgba(0,0,0,0.5);}
+    .about-card, .edu-outer, .experience-panel, .stack-panel, .project-card, .contact-left, .contact-right{background:linear-gradient(180deg, rgba(0,12,8,0.6), rgba(0,12,8,0.3));border:1px solid rgba(0,255,102,0.04);border-radius:12px;padding:16px;box-shadow:inset 0 2px 18px rgba(0,0,0,0.5);} 
 
-    .about-card{display:flex;flex-direction:column;gap:12px}
-    .about-left{color:rgba(0,255,102,0.68);line-height:1.75;font-size:15px}
+    .about-card{display:flex;flex-direction:row;gap:18px;align-items:flex-start;justify-content:space-between}
+    .about-left{color:rgba(0,255,102,0.68);line-height:1.75;font-size:15px;flex:1}
+
+    /* neon avatar */
+    .avatar-wrap{display:flex;align-items:center;gap:12px}
+    .avatar{
+      width:84px;height:84px;border-radius:12px;background:linear-gradient(180deg, rgba(0,255,102,0.06), rgba(0,255,102,0.02));border:1px solid rgba(0,255,102,0.08);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:var(--neon);box-shadow:0 10px 40px rgba(0,255,102,0.04), 0 0 18px rgba(0,255,102,0.03) inset;position:relative}
+    .avatar::after{content:'';position:absolute;inset:-6px;border-radius:14px;background:linear-gradient(90deg, rgba(0,255,102,0.06), transparent);filter:blur(8px);opacity:0.9;transition:opacity .24s}
+    .avatar:focus, .avatar:hover{transform:translateY(-2px);cursor:default}
+    .avatar-badge{font-size:12px;color:#00110a;background:linear-gradient(90deg,var(--neon),#00d25a);padding:6px 8px;border-radius:999px;font-weight:800;margin-top:6px;display:inline-block}
 
     /* Education cards */
     .edu-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
@@ -77,11 +110,11 @@
     .experience-panel{padding:16px}
     .exp-row{border-radius:10px;padding:12px;border:1px solid rgba(0,255,102,0.04);display:grid;grid-template-columns:220px 1fr;gap:14px;margin-bottom:12px;background:transparent;align-items:start}
 
-    /* stack/projects */
-    .stack-panel{padding:12px}
-    .projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:12px;align-items:stretch}
-    .project-card{border-radius:12px;padding:16px;background:transparent;border:1px solid rgba(0,255,102,0.04);box-shadow:inset 0 0 18px rgba(0,0,0,0.12);display:flex;flex-direction:column;justify-content:space-between;min-height:200px;transition:transform .12s ease, box-shadow .12s ease}
-    .project-card:hover{transform:translateY(-6px);box-shadow:0 30px 60px rgba(0,255,102,0.10), inset 0 0 28px rgba(0,255,102,0.02)}
+    /* Project hover neon border */
+    .project-card{border-radius:12px;padding:16px;background:transparent;border:1px solid rgba(0,255,102,0.04);box-shadow:inset 0 0 18px rgba(0,0,0,0.12);display:flex;flex-direction:column;justify-content:space-between;min-height:200px;transition:transform .12s ease, box-shadow .12s ease;position:relative;overflow:hidden}
+    .project-card::before{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(90deg, rgba(0,255,102,0.06), transparent);transform:scaleX(0);transform-origin:left;transition:transform .28s ease;z-index:1}
+    .project-card:hover::before{transform:scaleX(1)}
+    .project-card > div{position:relative;z-index:2}
 
     .tag-pill{padding:6px 10px;border-radius:8px;border:1px solid rgba(0,255,102,0.06);font-family:var(--mono);font-weight:700;background:rgba(0,0,0,0.25)}
 
@@ -97,25 +130,169 @@
     /* footer */
     footer{margin-top:12px;color:rgba(0,255,102,0.6);font-family:var(--mono);font-size:13px}
 
+    /* compact bottom bar */
+    .compact-footer{position:fixed;bottom:0;left:0;right:0;width:100%;border-top:1px solid rgba(255,255,255,0.05);padding:8px 0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:9999;transition:transform .36s cubic-bezier(.2,.9,.2,1), opacity .36s ease;opacity:1;transform:translateY(0);} 
+    .compact-footer.visible{opacity:1;transform:translateY(0);} 
+    .compact-footer.hidden{opacity:0;transform:translateY(100%);} 
+    .compact-footer .inner{max-width:var(--max-width);margin:0 auto;padding:0 var(--gutter);display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .compact-footer .left{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.65)}
+    .compact-footer .right{display:flex;align-items:center;gap:16px}
+    .compact-footer a{color:rgba(255,255,255,0.72);text-decoration:none;font-family:var(--mono);font-size:12px}
+    .compact-footer a:hover{color:var(--neon)}
+
+    /* mini terminal */
+    .mini-term-panel{border-radius:12px;padding:14px;background:linear-gradient(180deg, rgba(0,18,11,0.9), rgba(0,18,11,0.6));border:1px solid rgba(0,255,102,0.05);box-shadow:0 20px 50px rgba(0,0,0,0.6);font-family:var(--mono);color:var(--neon);margin:10px 0}
+    .mini-term-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .mini-term-controls{display:flex;gap:8px}
+    .mini-term-controls .wc{width:10px;height:10px;border-radius:50%;display:inline-block}
+    .mini-term-body{background:rgba(1,16,11,0.25);border-radius:8px;padding:12px;border:1px solid rgba(0,255,102,0.03);min-height:90px;font-size:14px;line-height:1.6}
+    .mini-term-line{font-family:var(--mono);color:var(--neon);white-space:pre-wrap}
+    .mini-term-meta{font-size:12px;color:rgba(0,255,102,0.6);font-family:var(--mono)}
+
+    /* cursor */
+    .cursor{display:inline-block;width:10px;margin-left:6px;animation:blink 1s steps(2) infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
     /* responsive */
-    @media (max-width:1100px){.about-card{grid-template-columns:1fr 300px}.projects-grid{grid-template-columns:repeat(2,1fr)}.container{padding:16px}.classic-term{font-size:14px}}
+    @media (max-width:1100px){.about-card{grid-template-columns:1fr 300px}.projects-grid{grid-template-columns:repeat(2,1fr)}.container{padding:16px}.classic-term{font-size:14px} .about-card{flex-direction:column;gap:12px} .avatar{width:72px;height:72px;font-size:22px} }
     @media (max-width:850px){.edu-cards{grid-template-columns:1fr}.projects-grid{grid-template-columns:1fr}.contact-grid{grid-template-columns:1fr}.top-nav{height:56px}.wrap{padding-top:calc(var(--nav-height) + 10px)}.cta-btn{display:none}}
 
     a:focus, button:focus, input:focus, textarea:focus{outline:2px solid rgba(0,255,102,0.12);outline-offset:2px}
-  .mini-term-panel{border-radius:12px;padding:14px;background:linear-gradient(180deg, rgba(0,18,11,0.9), rgba(0,18,11,0.6));border:1px solid rgba(0,255,102,0.05);box-shadow:0 20px 50px rgba(0,0,0,0.6);font-family:var(--mono);color:var(--neon);margin:10px 0}
-.mini-term-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.mini-term-controls{display:flex;gap:8px}
-.mini-term-controls .wc{width:10px;height:10px;border-radius:50%;display:inline-block}
-.mini-term-body{background:rgba(1,16,11,0.25);border-radius:8px;padding:12px;border:1px solid rgba(0,255,102,0.03);min-height:90px;font-size:14px;line-height:1.6}
-.mini-term-line{font-family:var(--mono);color:var(--neon);white-space:pre-wrap}
-.mini-term-meta{font-size:12px;color:rgba(0,255,102,0.6);font-family:var(--mono)}
 
-/* small responsive tweak for mini terminal */
-@media(max-width:900px){.mini-term-body{min-height:80px;font-size:13px}} 
-</style>
+    /* Fix experience alignment */
+    .experience-panel{padding:16px}
+    .experience-panel .exp-row{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:start;margin-bottom:14px;padding:12px;border-radius:10px;border:1px solid rgba(0,255,102,0.03);background:transparent}
+    .experience-panel .exp-meta{min-width:220px}
+    .experience-panel .exp-meta strong{display:block;font-size:15px;color:var(--neon)}
+    .experience-panel .exp-meta div{color:var(--muted);margin-top:6px}
+    .experience-panel .exp-body ul{margin:0;padding-left:18px}
+    @media(max-width:900px){ .experience-panel .exp-row{grid-template-columns:1fr; } .experience-panel .exp-meta{min-width:unset} }
+
+    /* reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .cursor, .nav-links::after, .project-card::before, .neon-flicker, .cta-btn.pulse {animation:none !important; transition:none !important}
+      .avatar::after{display:none}
+    }
+
+    /* --- APPENDED: Contact form: black neon vibe (do not remove marker) --- */
+
+    /* Make the left panel slightly darker so the right black form stands out */
+    .contact-left {
+      background: linear-gradient(180deg, rgba(0,0,0,0.7), rgba(1,2,3,0.55));
+      border: 1px solid rgba(0,255,102,0.04);
+      color: rgba(160,255,200,0.9);
+      box-shadow: inset 0 2px 12px rgba(0,0,0,0.6);
+    }
+
+    /* Black, punchy form panel that matches the terminal vibe */
+    .contact-right {
+      background: linear-gradient(180deg, #000000 0%, #041015 65%);
+      border: 1px solid rgba(0,255,102,0.06);
+      box-shadow:
+        0 12px 36px rgba(0,0,0,0.7),
+        inset 0 2px 12px rgba(0,255,102,0.02);
+      padding: 22px;
+      border-radius: 12px;
+      transition: box-shadow .18s ease, transform .12s ease;
+      min-height: 220px;
+    }
+
+    /* Slight lift on hover — subtle */
+    .contact-right:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 26px 60px rgba(0,0,0,0.75),
+        inset 0 2px 18px rgba(0,255,102,0.03);
+    }
+
+    /* Inputs and textarea: deep black, soft neon inner edge */
+    .form-field input,
+    .form-field textarea {
+      background: linear-gradient(180deg, rgba(0,0,0,0.85), rgba(3,6,8,0.7));
+      border: 1px solid rgba(0,255,102,0.06);
+      box-shadow: inset 0 1px 0 rgba(0,255,102,0.01), 0 6px 18px rgba(0,0,0,0.6);
+      color: var(--neon);
+      padding: 12px;
+      border-radius: 10px;
+      font-family: var(--mono);
+      font-size: 14px;
+      width: 100%;
+      outline: none;
+      transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
+      resize: vertical;
+    }
+
+    /* Placeholder tone: muted green */
+    .form-field input::placeholder,
+    .form-field textarea::placeholder {
+      color: rgba(0,255,102,0.14);
+    }
+
+    /* Focus state: stronger neon edge */
+    .form-field input:focus,
+    .form-field textarea:focus {
+      border-color: rgba(0,255,102,0.32);
+      box-shadow:
+        0 6px 26px rgba(0,255,102,0.04),
+        inset 0 0 12px rgba(0,255,102,0.02);
+      transform: translateY(-1px);
+    }
+
+    /* Labels remain neon but slightly smaller */
+    .form-field label {
+      color: rgba(0,255,102,0.9);
+      letter-spacing: 1px;
+      font-size: 12px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* Neon button: stronger black contrast and inner glow */
+    .send-btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, #00ff66, #00d25a);
+      color: #00110a;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: var(--mono);
+      box-shadow:
+        0 12px 40px rgba(0,255,102,0.12),
+        inset 0 2px 8px rgba(255,255,255,0.02);
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+    }
+
+    /* Button hover/active (neon pop) */
+    .send-btn:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 18px 60px rgba(0,255,102,0.18),
+        inset 0 2px 10px rgba(255,255,255,0.03);
+      filter: saturate(1.05);
+    }
+
+    /* Disabled / low-contrast states (if used) */
+    .send-btn[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Make the input borders slightly darker on small screens for consistency */
+    @media (max-width:850px){
+      .contact-right { padding: 16px; }
+      .form-field input, .form-field textarea { padding:10px; font-size:13px; }
+    }
+
+  </style>
 </head>
 <body>
+  <a class="skip-link" href="#maincontent">Skip to main content</a>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="neon-grid" aria-hidden="true"></div>
   <div class="binary" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
 
   <!-- Fixed top nav -->
   <nav class="top-nav" role="navigation" aria-label="Primary">
@@ -132,27 +309,32 @@
         <a href="#experience-section">EXPERIENCE</a>
         <a href="#contact-section">CONTACT</a>
       </div>
-      <button class="cta-btn" id="openRolesBtn" aria-label="Open to roles">OPEN TO ROLES</button>
-      <div class="nav-decor" aria-hidden="true"></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-left:auto">
+        <a class="cta-btn pulse" id="openRolesBtn" href="#contact-section" aria-label="Open to roles">OPEN TO ROLES</a>
+        <div class="socials" aria-hidden="false">
+          <a href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub">GH</a>
+          <a href="https://linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn">IN</a>
+        </div>
+      </div>
     </div>
   </nav>
 
   <div class="wrap">
-    <div class="container">
+    <main id="maincontent" class="container" role="main">
 
       <!-- terminal -->
       <div class="terminal-panel" role="region" aria-label="Terminal">
         <div class="terminal-header">
           <div class="term-dots" aria-hidden="true"><span style="width:10px;height:10px;background:#ff6b6b;border-radius:999px;display:inline-block;margin-right:8px"></span><span style="width:10px;height:10px;background:#ffd166;border-radius:999px;display:inline-block;margin-right:8px"></span><span style="width:10px;height:10px;background:var(--neon);border-radius:999px;display:inline-block"></span></div>
           <div class="muted">terminal.app</div>
-          <div style="margin-left:auto;font-size:13px;color:var(--muted)" class="mono">Updated • 2025</div>
+          <div style="margin-left:auto;font-size:13px;color:var(--muted)" class="mono">Updated • Nov 22, 2025</div>
         </div>
-        <div class="classic-term" role="region" aria-label="Terminal output">$ whoami
+        <div class="classic-term neon-flicker" role="region" aria-label="Terminal output">$ whoami
 Yash Chauhan
-Security Analyst — Purple Team
+Security Analyst — Purple Team<span class="cursor">▌</span>
 
 $ role
-Hybrid: Red & Blue Operations
+Hybrid: Red &amp; Blue Operations
 Vulnerability Assessment · Detection Engineering · Incident Handling
 
 $ mission
@@ -160,23 +342,41 @@ Bridge offensive insights with defensive engineering — secure, detect, respond
       </div>
 
       <!-- ABOUT -->
-      <section id="about-section" class="about-card" aria-label="About">
-        <span class="section-anchor" id="about-section-anchor"></span>
-        <div class="about-left">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-            <h1 class="site-title">WHO I AM &amp; HOW I WORK</h1>
-            <p class="muted" style="max-width:420px;text-align:right;font-size:13px">A brief overview of my approach, mindset and working philosophy.</p>
-          </div>
-          <p style="margin-top:12px">As a Security Analyst and Purple Teamer with hands-on experience in vulnerability assessment, detection engineering and incident handling, I focus on securing cloud and web-facing environments. My work spans VAPT, WAF hardening, log analysis and IR across AWS and CDN infrastructures.</p>
-          <p>I design and validate detection rules, run realistic attack simulations to find real-world gaps, and translate technical findings into prioritized, actionable remediation. Comfortable with Cloudflare, Akamai, Imperva, AWS, ELK, Wazuh, and modern pentest tooling.</p>
+      <section id="about-section">
+        <div class="about-card" aria-label="About" style="padding:24px 28px;border-radius:14px;display:flex;gap:32px;align-items:flex-start;justify-content:space-between;">
+  <div class="about-left" style="flex:1;color:rgba(0,255,102,0.78);line-height:1.8;font-size:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%">
+      <h1 class="site-title neon">WHO I AM &amp; HOW I WORK</h1>
+      <p class="muted" style="margin:0;max-width:420px;text-align:right;font-size:14px;opacity:0.95;">A brief overview of my approach, mindset and working philosophy.</p>
+    </div>
+    <p style="margin-top:16px;color:#aaffdd;">As a Security Analyst and Purple Teamer with hands-on experience in vulnerability assessment, detection engineering and incident handling, I focus on securing cloud and web-facing environments. My work spans VAPT, WAF hardening, log analysis and IR across AWS and CDN infrastructures.</p>
+    <p style="color:#aaffdd;">I design and validate detection rules, run realistic attack simulations to find real-world gaps, and translate technical findings into prioritized, actionable remediation. Comfortable with Cloudflare, Akamai, Imperva, AWS, ELK, Wazuh, and modern pentest tooling.</p>
+  </div>
 
-          </div>
+  <aside class="about-right" style="min-width:300px;padding:8px 0;display:flex;flex-direction:column;gap:18px;align-items:flex-end;">
+    <div class="avatar-wrap" style="align-self:flex-end">
+      <div class="avatar" tabindex="0" role="img" aria-label="Avatar Yash">YC
+        <div style="position:absolute;bottom:8px;right:8px"><span class="avatar-badge">Purple·Teamer</span></div>
+      </div>
+    </div>
 
-        <aside class="about-right">
-          <div class="meta"><h3 class="sub">CURRENT ROLE</h3><p style="margin-top:10px;color:var(--neon);font-weight:700" id="current-role-anchor">Associate Security Operations Specialist @ IDX</p></div>
-          <div class="meta"><h3 class="sub">PRIMARY STRENGTHS</h3><p style="margin-top:10px;color:var(--neon);font-weight:600">VAPT · WAF rule management · Log Analysis · Incident Response</p></div>
-          <div class="meta"><h3 class="sub">LOCATION</h3><p style="margin-top:10px;color:var(--neon);font-weight:600">Vadodara, Gujarat, India</p></div>
-        </aside>
+    <div class="meta" style="width:100%">
+      <h3 class="sub" style="font-size:15px;opacity:0.9;">CURRENT ROLE</h3>
+      <p style="margin-top:6px;color:var(--neon);font-weight:700;font-size:15px;">Security Analyst @ IDX</p>
+    </div>
+
+    <div class="meta" style="width:100%">
+      <h3 class="sub" style="font-size:15px;opacity:0.9;">PRIMARY STRENGTHS</h3>
+      <p style="margin-top:6px;color:var(--neon);font-weight:600;line-height:1.6;font-size:15px;">VAPT • WAF rule management • Log Analysis • Incident Response</p>
+    </div>
+
+    <div class="meta" style="width:100%">
+      <h3 class="sub" style="font-size:15px;opacity:0.9;">LOCATION</h3>
+      <p style="margin-top:6px;color:var(--neon);font-weight:600;font-size:15px;">Vadodara, Gujarat, India</p>
+    </div>
+
+  </aside>
+</div>
       </section>
 
       <!-- EDUCATION -->
@@ -187,7 +387,7 @@ Bridge offensive insights with defensive engineering — secure, detect, respond
         </div>
 
         <div class="edu-cards" style="margin-top:14px">
-          <div class="edu-card" style="padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid rgba(0,255,102,0.18);box-shadow:0 6px 24px rgba(0,255,102,0.03);min-height:140px;" id="education-anchor">
+          <div class="edu-card" style="padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:140px;">
             <div style="font-size:20px;margin-bottom:6px">🎓</div>
             <div style="text-align:center">
               <h4 style="margin:0;font-size:15px;color:var(--neon)">Education</h4>
@@ -195,48 +395,66 @@ Bridge offensive insights with defensive engineering — secure, detect, respond
             </div>
           </div>
 
-          <div class="edu-card" style="padding:18px;flex:1;min-height:140px;border:1px solid rgba(0,255,102,0.18);box-shadow:0 6px 24px rgba(0,255,102,0.03);">
+          <div class="edu-card" style="padding:18px;flex:1;min-height:140px;">
             <h4 style="margin-bottom:8px">Academic Summary</h4>
-            <p style="color:var(--muted);line-height:1.6;margin:0;font-size:15px">Bachelor of Technology (B.Tech) — Computer Science &amp; Engineering, Parul University. Coursework focused on networking, operating systems, databases and applied cybersecurity topics. Expected graduation: Sep 2025.</p>
+            <p style="color:var(--muted);line-height:1.6;margin:0;font-size:15px">Bachelor of Technology (B.Tech) — Computer Science &amp; Engineering, Parul University. Coursework focused on networking, operating systems, databases and applied cybersecurity topics. </p>
           </div>
         </div>
 
         <div class="edu-card" style="margin-top:16px;padding:16px;background:#021016;border:1px solid rgba(255,255,255,0.03);box-shadow:inset 0 0 20px rgba(0,0,0,0.15);border-radius:12px;color:var(--neon);" id="certifications-anchor">
           <h4 style="margin:0 0 8px">Certifications</h4>
-          <div class="cert-collection" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;align-items:start;">
-            <div class="edu-card" style="padding:12px;min-height:96px;display:flex;flex-direction:column;justify-content:center;">
-              <strong style="font-size:14px">CompTIA</strong>
+          <div class="cert-collection" style="align-items:stretch; display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;align-items:start;">
+            <div class="edu-card" style="padding:12px;min-height:120px;display:flex;flex-direction:column;justify-content:center;">
+              <strong style="font-size:14px">CompTIA Security+</strong>
               <p style="color:var(--muted);margin-top:8px;font-size:13px;line-height:1.3">Foundation IT & cybersecurity fundamentals across platforms and environments.</p>
             </div>
 
-            <div class="edu-card" style="padding:12px;min-height:96px;display:flex;flex-direction:column;justify-content:center;">
+            <div class="edu-card" style="padding:12px;min-height:120px;display:flex;flex-direction:column;justify-content:center;">
               <strong style="font-size:14px">AWS Cloud Practitioner</strong>
               <p style="color:var(--muted);margin-top:8px;font-size:13px;line-height:1.3">AWS fundamentals, core services, and cloud security basics.</p>
             </div>
 
-            <div class="edu-card" style="padding:12px;min-height:96px;display:flex;flex-direction:column;justify-content:center;">
+            <div class="edu-card" style="padding:12px;min-height:120px;display:flex;flex-direction:column;justify-content:center;">
               <strong style="font-size:14px">AWS Security Fundamentals</strong>
               <p style="color:var(--muted);margin-top:8px;font-size:13px;line-height:1.3">IAM, logging, monitoring and recommended cloud security controls.</p>
             </div>
 
-            <div class="edu-card" style="padding:12px;min-height:96px;display:flex;flex-direction:column;justify-content:center;">
+            <div class="edu-card" style="padding:12px;min-height:120px;display:flex;flex-direction:column;justify-content:center;">
               <strong style="font-size:14px">Programming Using Python</strong>
               <p style="color:var(--muted);margin-top:8px;font-size:13px;line-height:1.3">Python fundamentals for automation and data processing tasks.</p>
             </div>
 
           </div>
         </div>
+
       </section>
 
       <!-- EXPERIENCE -->
       <section id="experience-section" aria-label="Experience">
-        <span class="section-anchor" id="experience-section-anchor"></span>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
           <h2 class="section-title" style="margin-top:6px">WHERE I'VE APPLIED SECURITY</h2>
           <p class="muted" style="max-width:420px;text-align:right">Roles and hands-on positions where I practiced real-world security operations.</p>
         </div>
 
         <div class="experience-panel" style="margin-top:12px">
+
+          <!-- MOVED to TOP: Cyber Security Research Volunteer (Claroty) -->
+          <div class="exp-row">
+            <div class="exp-meta">
+              <strong>Cyber Security Research Volunteer</strong>
+              <div style="font-style:italic;color:var(--muted);margin-top:6px">Claroty — New York, United States</div>
+              <div style="margin-top:8px;color:var(--muted)">Sep 2025 — Present</div>
+            </div>
+            <div class="exp-body">
+              <h4>OT Security · ICS/IoT · Critical Infrastructure</h4>
+              <ul style="margin-top:8px;color:var(--muted);padding-left:18px">
+                <li>Focused on OT security, cyber-physical systems, IoT security, and industrial network protection.</li>
+                <li>Skilled in threat assessment, security configuration review, and risk evaluation in critical infrastructure environments.</li>
+                <li>Contributed to research on information security, disaster recovery, and IT security policies for OT ecosystems.</li>
+                <li>Adept at understanding ICS/OT threat models, vulnerabilities, and mitigation strategies used in industrial sectors.</li>
+              </ul>
+            </div>
+          </div>
 
           <div class="exp-row">
             <div class="exp-meta">
@@ -312,9 +530,8 @@ Bridge offensive insights with defensive engineering — secure, detect, respond
 
       <!-- SKILLS -->
       <section id="skills-section" aria-label="Skills">
-        <span class="section-anchor" id="skills-section-anchor"></span>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-          <h2 class="section-title" style="margin-top:18px">SECURITY STACK I WORK WITH</h2>
+          <h2 class="section-title">SECURITY STACK I WORK WITH</h2>
           <p class="muted" style="max-width:420px;text-align:right">Tools and technologies I regularly use for assessment, monitoring and response.</p>
         </div>
         <div class="stack-panel" style="margin-top:12px">
@@ -352,26 +569,27 @@ Bridge offensive insights with defensive engineering — secure, detect, respond
         </div>
       </section>
 
+      <!-- mini live snippets terminal -->
+      <div class="mini-term-panel" role="region" aria-label="Live snippets">
+        <div class="mini-term-header">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="mini-term-controls" aria-hidden="true"><span class="wc" style="background:#ff6b6b"></span><span class="wc" style="background:#ffd166"></span><span class="wc" style="background:var(--neon)"></span></span>
+            <div style="font-weight:700;font-family:var(--mono)">live • snippets</div>
+          </div>
+          <div class="mini-term-meta">logs • iocs • waf</div>
+        </div>
+        <div class="mini-term-body">
+          <div id="mini-term-output" class="mini-term-line" style="visibility:hidden" aria-live="polite">Initializing...</div>
+        </div>
+      </div>
+
       <!-- PROJECTS -->
       <section id="projects-section" aria-label="Projects">
-        <div class="mini-term-panel" aria-hidden="false" data-mock-url="/mnt/data/c3bed3a0-aa68-4a4c-82cb-1e463f6a14d1.png">
-          <div class="mini-term-header">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="mini-term-controls">
-                <span class="wc wc-close" style="background:linear-gradient(180deg,#ff605c,#ff3b30)"></span>
-                <span class="wc wc-min" style="background:linear-gradient(180deg,#ffbd2e,#ffb21a)"></span>
-                <span class="wc wc-max" style="background:linear-gradient(180deg,#2bd24a,#00c851)"></span>
-              </div>
-              <div class="mini-term-meta">Terminal snippets • quick highlights</div>
-            </div>
-            <div style="font-family:var(--mono);font-size:13px;color:rgba(0,255,102,0.85);">Live snippets</div>
-          </div>
-          <div class="mini-term-body">
-            <pre id="mini-term-output" class="mini-term-line" aria-live="polite"></pre>
-          </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <h2 class="section-title">PROJECTS<br><small class="muted" style="font-family:var(--mono);font-size:13px">Hands-on security work</small></h2>
+          <p class="muted" style="max-width:520px;text-align:right">A few highlights that reflect the type of problems I solve in security operations, cloud environments and web-facing applications.</p>
         </div>
-
-        <div class="projects-grid" style="margin-top:12px">
+        <div class="projects-grid" style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
           <div class="project-card">
             <div>
               <div style="font-size:12px;color:var(--muted)">VAPT • WEB APPLICATIONS</div>
@@ -413,97 +631,84 @@ Bridge offensive insights with defensive engineering — secure, detect, respond
 
       <!-- CONTACT -->
       <section id="contact-section" aria-label="Contact">
-        <span class="section-anchor" id="contact-section-anchor"></span>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
           <h2 class="section-title" style="margin-top:18px">LET'S TALK SECURITY</h2>
-          <p class="muted" style="max-width:420px;text-align:right">Get in touch if you'd like to collaborate or need security expertise.</p>
+          <p class="muted" style="max-width:420px;text-align:right">Open to security analyst / security operations / blue-team oriented roles, remote or onsite (India).</p>
         </div>
         <div class="contact-grid" style="margin-top:12px">
           <div class="contact-left">
             <p style="margin-top:6px;color:var(--muted)">If you need someone who lives in the logs, understands WAFs and cloud security tools, and can translate technical findings into clear actions, I'd be happy to connect.</p>
-            <p style="margin-top:10px">Email: <a href="mailto:yash222000.yc@gmail.com" style="color:var(--neon)">yash222000.yc@gmail.com</a> &nbsp;&nbsp; Phone: <span style="color:var(--neon)">+91 94295 03293</span></p>
+            <p style="margin-top:10px">Email: <a id="emailLink" href="mailto:yash222000.yc@gmail.com" style="color:var(--neon)">yash222000.yc@gmail.com</a> &nbsp;&nbsp; Phone: <span style="color:var(--neon)">+91 99249 21995</span></p>
           </div>
 
           <div class="contact-right" aria-label="Contact form">
             <form id="contactForm" onsubmit="return handleSubmit(event)">
               <div class="form-field"><label class="muted" style="font-size:12px;letter-spacing:1px">NAME</label><input id="name" name="name" type="text" placeholder="Your name" required /></div>
-              <div class="form-field"><label class="muted" style="font-size:12px;letter-spacing:1px">EMAIL</label><input id="email" name="email" type="email" placeholder="you@example.com" required /></div>
-              <div class="form-field"><label class="muted" style="font-size:12px;letter-spacing:1px">MESSAGE</label><textarea id="message" name="message" placeholder="How can I help you?" required rows="5"></textarea></div>
-              <div style="margin-top:6px"><button class="send-btn" type="submit">SEND MESSAGE</button></div>
-              <div id="status" class="muted" style="margin-top:12px"></div>
+              <div class="form-field" style="margin-top:12px"><label class="muted" style="font-size:12px;letter-spacing:1px">EMAIL</label><input id="email" name="email" type="email" placeholder="you@example.com" required /></div>
+              <div class="form-field" style="margin-top:12px"><label class="muted" style="font-size:12px;letter-spacing:1px">MESSAGE</label><textarea id="message" name="message" placeholder="How can I help you?" required rows="5"></textarea></div>
+              <div style="margin-top:16px"><button class="send-btn" type="submit">SEND MESSAGE</button></div>
+              <div id="status" class="muted" style="margin-top:12px;color:rgba(160,255,200,0.7)"></div>
             </form>
           </div>
         </div>
       </section>
 
-      <footer>
-        <div class="muted mono">Built with neon terminal vibe • Hosted on GitHub Pages</div>
-        <div class="muted mono">© 2025 Yash Chauhan • Vadodara, India</div>
-      </footer>
+    </main>
+  </div>
 
+  <!-- compact footer (fixed) -->
+  <div class="compact-footer visible" role="contentinfo" aria-label="Compact footer">
+    <div class="inner">
+      <div class="left">© 2025 Yash Chauhan. All rights reserved.</div>
+      <div class="right">
+        <a href="#about-section">Back to top ↑</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
     </div>
   </div>
 
   <script>
+/* NAV pill positioning */
 (function(){
-  const links = Array.from(document.querySelectorAll('.nav-links a'));
-  const sectionIds = links.map(l => (l.getAttribute('href')||'').replace(/^#/, '')).filter(Boolean);
-  const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
-
-  function setActive(id){
-    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+  const nav = document.querySelector('.nav-links');
+  if(!nav) return;
+  const links = Array.from(nav.querySelectorAll('a'));
+  function positionPill(el){
+    const r = el.getBoundingClientRect();
+    const nr = nav.getBoundingClientRect();
+    const left = (r.left - nr.left) + 'px';
+    const width = r.width + 'px';
+    nav.style.setProperty('--pill-left', left);
+    nav.style.setProperty('--pill-width', width);
   }
-
-  // Click behavior: smooth scroll and set active. Temporarily ignore observer while programmatic scroll happens
-  let ignoreObserverUntil = 0;
-  links.forEach(a => {
-    a.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      const target = (a.getAttribute('href')||'').replace(/^#/, '');
-      const el = document.getElementById(target);
-      if (el) {
-        // mark to ignore observer for 600ms to avoid race with IntersectionObserver
-        ignoreObserverUntil = Date.now() + 600;
-        el.scrollIntoView({behavior: 'smooth', block: 'start'});
-      }
-      setActive(target);
-      try{ history.replaceState(null, '', '#' + target); } catch(e){}
-    });
-  });
-
-  // Use IntersectionObserver for reliable active state, but respect ignore window
-  const observerOpts = { root: null, rootMargin: '0px 0px -45% 0px', threshold: 0 };
-  let activeId = sectionIds[0] || null;
-
-  const io = new IntersectionObserver((entries) => {
-    if(Date.now() < ignoreObserverUntil) return; // skip while scrolling via click
-    let visible = entries.filter(e => e.isIntersecting).sort((a,b)=> b.intersectionRatio - a.intersectionRatio);
-    if(visible.length){
-      const id = visible[0].target.id;
-      if(id !== activeId){ activeId = id; setActive(id); }
-      return;
-    }
-    const scrollPos = window.scrollY + (window.innerHeight * 0.15);
-    let last = null; sections.forEach(s => { if(s.offsetTop <= scrollPos) last = s; });
-    if(last && last.id !== activeId){ activeId = last.id; setActive(last.id); }
-  }, observerOpts);
-
-  sections.forEach(s => io.observe(s));
-
-  // On load, honour hash and ensure active
-  window.addEventListener('load', ()=>{
-    const hash = location.hash.replace(/^#/, '');
-    if(hash){ const el = document.getElementById(hash); if(el){ ignoreObserverUntil = Date.now() + 600; setTimeout(()=>{ el.scrollIntoView({behavior:'smooth', block:'start'}); setActive(hash); }, 60); return; } }
-    setTimeout(()=>{
-      sections.forEach(s => {
-        const rect = s.getBoundingClientRect(); if(rect.top <= window.innerHeight*0.5 && rect.bottom > window.innerHeight*0.2){ setActive(s.id); activeId = s.id; }
-      });
-    }, 80);
-  });
-
+  // init on load (pick first visible / hash)
+  window.addEventListener('load', ()=>{ const hash = location.hash.replace(/^#/, ''); let active = links.find(l => l.getAttribute('href') === '#' + hash) || links[0]; if(active) positionPill(active); });
+  links.forEach(a => a.addEventListener('click', (e)=>{ positionPill(e.currentTarget); }));
+  window.addEventListener('resize', ()=>{ const active = links.find(l => l.classList.contains('active')) || links[0]; if(active) positionPill(active); });
 })();
 
-// Mini terminal typing + rotate snippets
+/* compute active link class on intersection (keeps pill updated) */
+(function(){
+  const links = Array.from(document.querySelectorAll('.nav-links a'));
+  const sections = links.map(l => document.getElementById((l.getAttribute('href')||'').replace('#',''))).filter(Boolean);
+  const nav = document.querySelector('.nav-links');
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.toggle('active', l.getAttribute('href')==('#'+e.target.id)));
+        const active = links.find(l=>l.classList.contains('active'));
+        if(active) setTimeout(()=>{ nav.style.setProperty('--pill-left', (active.getBoundingClientRect().left - nav.getBoundingClientRect().left) + 'px'); nav.style.setProperty('--pill-width', active.getBoundingClientRect().width + 'px'); }, 80);
+      }
+    });
+  },{root:null,rootMargin:'0px 0px -45% 0px',threshold:0});
+  sections.forEach(s=>io.observe(s));
+})();
+
+/* contact form (demo) */
+function handleSubmit(e){ e.preventDefault(); const status = document.getElementById('status'); status.textContent = 'Thanks — message sending is not configured in this demo.'; return false; }
+
+/* Mini terminal typing + rotate snippets */
 document.addEventListener('DOMContentLoaded', function(){
   const out = document.getElementById('mini-term-output');
   if(!out) return;
@@ -516,7 +721,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   let idx = 0;
   const typeSpeed = 14;
-  const pauseAfter = 1200;
+  const pauseAfter = 900;
 
   function typeText(text, cb){
     out.textContent = '';
@@ -526,7 +731,6 @@ document.addEventListener('DOMContentLoaded', function(){
       out.textContent = text.slice(0, i) + '▌';
       if(i >= text.length){
         clearInterval(timer);
-        // remove caret and call callback after pause
         out.textContent = text;
         setTimeout(cb, pauseAfter);
       }
@@ -534,16 +738,57 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   function next(){
-    typeText(snippets[idx], ()=>{
-      idx = (idx + 1) % snippets.length;
-      setTimeout(next, 400);
-    });
+    typeText(snippets[idx], ()=>{ idx = (idx + 1) % snippets.length; setTimeout(next, 400); });
   }
 
-  // ensure visible and start
+  // ensure visible for accessibility
   out.style.visibility = 'visible';
   setTimeout(next, 400);
 });
-</script>
+
+/* small matrix background (canvas) — subtle + behind content — respects prefers-reduced-motion */
+(function(){
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const canvas = document.createElement('canvas');
+
+  // subtle and behind everything
+  canvas.style.position='fixed';
+  canvas.style.inset='0';
+  canvas.style.pointerEvents='none';
+  canvas.style.opacity='0.06';       // overall subtle visibility
+  canvas.style.zIndex='-2';          // push behind content
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let w,h;
+  function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  const cols = Math.max(80, Math.floor(w/14));
+  const ypos = Array(cols).fill(0).map(()=>Math.random()*h);
+
+  // draw loop uses faint background clearing so it doesn't darken page
+  function frame(){
+    // very faint overlay (keeps previous fade subtle)
+    ctx.fillStyle='rgba(0,0,0,0.04)';
+    ctx.fillRect(0,0,w,h);
+
+    ctx.fillStyle='rgba(0,255,102,0.035)';
+    ctx.font='12px monospace';
+    for(let i=0;i<cols;i++){
+      const text = Math.random()>0.96? '01':'10';
+      ctx.fillText(text, i*14, ypos[i]);
+      ypos[i]+=12 + Math.random()*8;
+      if(ypos[i]>h) ypos[i]=Math.random()*20 - 20;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // only run on wider screens for performance, keep subtle
+  if(window.innerWidth>800) frame();
+})();
+
+  </script>
+
 </body>
 </html>
